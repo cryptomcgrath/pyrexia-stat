@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
+
 import sensor as sp
 from datetime import datetime
 import utils as ut
 from tinydb import TinyDB, Query
-import init_db as db
+import dblib as db
 
 last_poll_time = 0
 poll_interval = 30
