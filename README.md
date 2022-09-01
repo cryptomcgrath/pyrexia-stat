@@ -6,12 +6,13 @@ A smart thermostat running on Raspberry Pi and Python<br>
 <dl>
 <dt>Raspberry Pi Zero 2W</dt>
 <dt>Relay board</dt>
-<dd>DZS Elec 5V 2 Channel Relay Optocoupler Isolation Module Red Board 3-5V High and 0-1.5V Low Level Triggered Load AC 0-250V / DC 0-30V 10A SCM IO Control</dd>
+<dd>DZS Elec 5V 2 Channel Relay... https://www.amazon.com/dp/B07BDLQB8Q?ref=ppx_pop_mob_ap_share</dd>
 <dt>DC to DC Stepdown Converter</dt>
 <dd>Used to convert 12VDC (from RV) to 5VDC (pi)</dd>
-<dd>D-PLANET [2-Pack] LM2596s Buck Converter DC to DC Step-Down Voltage Regulator Power Module 36V 24V 12V to 5V 2A Voltage Stabilizer with LED Display )</dd>
+<dd>D-PLANET [2-Pack] LM2596s Buck Converter DC to DC Step-Down Voltage Regulator Power Module 36V 24V 12V to 5V 2A Voltage Stabilizer with LED Display  https://a.co/d/cy7e5MV</dd>
 <dt>Sensorpush HT.w Bluetooth temperature sensor</dt>
 <dd>To read the temperature near my rv holding tanks</dd>
+<dd>SensorPush HT.w Wireless Thermometer/Hygrometer Water-Resistant for iPhone/Android. USA Made Indoor/Outdoor Humidity/Temperature/Dewpoint/VPD Monitor/Logger. Smart Sensor with Alerts https://a.co/d/4TTQPGd</dd>
 
 <br>
 <p>Software:</p>
