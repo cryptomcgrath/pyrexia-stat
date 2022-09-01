@@ -15,9 +15,11 @@ A smart thermostat running on Raspberry Pi and Python<br>
 
 <br>
 <p>Software:</p>
+  <li>Raspberry Pi OS</li>
 <li>bluez-5.62</li>
 <li>python3</li>
 <li>tinydb</li>
 <br>
+  
 
 ![image](https://user-images.githubusercontent.com/5443337/187974454-2e66458a-9668-4807-a1a1-eb1f25f0f4ab.png)
