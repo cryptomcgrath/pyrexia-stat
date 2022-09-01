@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
 
-import init_db
+import dblib
 
-init_db.init()
+dblib.init()
