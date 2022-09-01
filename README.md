@@ -1,4 +1,4 @@
-# pyrexia
+# pyrexia-stat
 
 A smart thermostat running on Raspberry Pi and Python<br>
 <br>
