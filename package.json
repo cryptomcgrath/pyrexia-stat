@@ -1,0 +1,19 @@
+{
+  "name": "pyrexia-stat",
+  "version": "1.0.0",
+  "description": "Pyrexia Thermostat API",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cryptomcgrath/pyrexia-stat.git"
+  },
+  "author": "Ed McGrath",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cryptomcgrath/pyrexia-stat/issues"
+  },
+  "homepage": "https://github.com/cryptomcgrath/pyrexia-stat#readme"
+}
