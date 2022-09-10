@@ -1,51 +1,54 @@
 #!/usr/bin/env python3
 
-import sensor as sp
 from datetime import datetime
 import utils as ut
-from tinydb import TinyDB, Query
-import dblib as db
+import RPi.GPIO as gpio
+import logging
+
+import relay
+import rest
+from program import Program
+
+logging.basicConfig(filename='phrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
+logging.getLogger(__name__).addHandler(logging.NullHandler())
+log = logging.getLogger("pyrexia")
 
 last_poll_time = 0
 poll_interval = 30
 
 
-def update_sensors():
-    sensor_db = TinyDB(db.SENSOR_DB_FILENAME)
-    sensors = sensor_db.all()
-    for sensor in sensors:
-        print(sensor)
-        update_time = sensor["update_time"]
-        update_interval = sensor["update_interval"]
-        if ut.currentTimeInt() - update_time > update_interval:
-        
-            if sensor["type"][0:2] == "sp":
-                addr = sensor["type"][3:]
-                sp.connect(addr)
-            
-                def cb(ts, temp):
-                    print("temp={}".format(temp))                 
-                    save_temp(sensor["name"], temp)
-                sp.read_latest(cb)
+try:
+    while True:
+        if ut.currentTimeInt() - last_poll_time > poll_interval: 
+            last_poll_time = ut.currentTimeInt()
 
-def save_temp(name, temp):
-    sensor_db = TinyDB(db.SENSOR_DB_FILENAME)
-    rec = Query()
-    sensor_db.update({'value': temp, 'update_time': ut.currentTimeInt() }, rec.name == name)
+            sensors = rest.get_sensors_list()
+            controls = rest.get_controls_list()
+            programs = rest.get_programs_list()
 
-def check_programs():
-    program_db = TinyDB(db.PROGRAM_DB_FILENAME)
-    programs = program_db.all()
-    for program in programs:
-        if program["enabled"]:
-            name = program["name"]
-            print("program {} enabled".format(name))
+            log.debug("sensors {} controls {} programs {}".format(len(sensors), len(controls), len(programs)))
 
-while True:
-    if ut.currentTimeInt() - last_poll_time > poll_interval: 
-        last_poll_time = ut.currentTimeInt()
+            if len(sensors) > 0 and len(controls) > 0 and len(programs) > 0:
 
-        update_sensors()
-        check_programs()
+
+                # run the programs and determine the actions
+                for program in programs:
+                    sensor = next(x for x in sensors if x.id == program.sensor_id)
+                    v = sensor.read_sensor()
+                    if v != -999:
+                        control = next(x for x in controls if x.id == program.control_id)
+                        control.apply_action(sensors, program)
+
+                # execute the actions
+                for control in controls:
+                    control.command(False)
+                    ##control.execute_action()
+       
+finally:
+    print("done")
+    try:
+        gpio.cleanup()
+    except:
+        pass
 
 

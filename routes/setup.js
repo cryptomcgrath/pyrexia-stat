@@ -28,18 +28,41 @@ router.post("/init", (req, res, next) => {
         db.run('drop table if exists controls')
         db.run('CREATE TABLE controls (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, min_rest INT, last_off_time INT, last_on_time INT, min_run INT, gpio INT, gpio_on_hi bool)')
         var insert = 'INSERT INTO controls (name, min_rest, last_off_time, last_on_time, min_run, gpio, gpio_on_hi) VALUES (?, ?, ?, ?, ?, ?, ?)'
-        db.run(insert, ['furnace', 180, 0, 0, 180, 17, true])
+        db.run(insert, ['furnace', 180, 0, 0, 180, 5, true])
 
         // programs
         db.run('drop table if exists programs')
-        db.run('CREATE TABLE programs (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, type text, enabled bool, sensor_id INTEGER, value FLOAT)') 	
-        var insert = 'INSERT INTO PROGRAMS (name, type, enabled, sensor_id, value) VALUES (?, ?, ?, ?, ?)'
-        db.run(insert, ['heat', 'heat', true, 1, 0.0])
+        db.run('CREATE TABLE programs (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, mode text, enabled bool, sensor_id INTEGER, set_point FLOAT, control_id INT)') 	
+        var insert = 'INSERT INTO PROGRAMS (name, mode, enabled, sensor_id, set_point, control_id) VALUES (?, ?, ?, ?, ?, ?)'
+        db.run(insert, ['heat', 'heat', true, 1, 65.0, 1])
 
+        db.run('drop table if exists config')
+        db.run('CREATE TABLE config (key text, value text)')
+        var insert = 'insert into config (key, value) values (?,?)'
+        db.run(insert, ['units', 'f'])
+        db.run(insert, ['weather_refresh_secs', '1000'])
+        db.run(insert, ['openweather_apikey', '24fc7c899cfe76e81071ef08550b62c6'])
+        db.run(insert, ['poll_interval', '30'])
         res.json({"message": "Ok"})
     })
 
 })
+
+router.get("/config", (req, res, next) => {
+    var sql = "select * from config"
+    var params = []
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            res.status(400).json({"error":err.message})
+            return
+        }
+        res.json({
+            "message":"success",
+            "data":rows
+        })
+    })
+})
+
 
 
 module.exports = router

@@ -40,6 +40,32 @@ router.get("/:id", (req, res, next) => {
       })
 })
 
+router.post("/:id/temp", (req, res, next) => {
+    var data = {
+        value: req.body.value,
+        update_time: req.body.update_time
+    }
+
+    db.run(
+        `UPDATE sensors set
+           update_time = ?,
+           value = ?
+           WHERE id = ?`,
+        [data.update_time, data.value, req.params.id],
+        function (err, result) {
+            if (err){
+                res.status(400).json({"error": res.message})
+                return
+            }
+            res.json({
+                message: "success",
+                data: data,
+                changes: this.changes
+            })
+    })
+
+})
+
 
 router.post("/", (req, res, next) => {
     var errors=[]
@@ -69,7 +95,7 @@ router.post("/", (req, res, next) => {
         value: req.body.value,
         update_interval: req.body.update_interval
     }
-    var sql ='INSERT INTO sensors (name, addr, update_time) VALUES (?,?,?,?,?)'
+    var sql ='INSERT INTO sensors (name, addr, update_time, value, update_interval) VALUES (?,?,?,?,?)'
     var params =[data.name, data.addr, data.update_time, date.value, data.update_interval]
     db.run(sql, params, function (err, result) {
         if (err){
@@ -100,7 +126,7 @@ router.patch("/:id", (req, res, next) => {
            value = COALESCE(?,value),
            update_interval = COALESCE(?, update_interval)
            WHERE id = ?`,
-        [data.name, data.email, data.update_time, data.value, data.update_interval, req.params.id],
+        [data.name, data.addr, data.update_time, data.value, data.update_interval, req.params.id],
         function (err, result) {
             if (err){
                 res.status(400).json({"error": res.message})
@@ -116,7 +142,7 @@ router.patch("/:id", (req, res, next) => {
 
 router.delete("/:id", (req, res, next) => {
     db.run(
-        'DELETE FROM user WHERE id = ?',
+        'DELETE FROM sensors WHERE id = ?',
         req.params.id,
         function (err, result) {
             if (err){
