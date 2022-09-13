@@ -1,7 +1,8 @@
 import pexpect
 import utils as ut
-import sensorpush
+import sensorpush_parser
 import sys
+import asyncio
 
 # change this to your sensor address
 # use hcitool to find it:
@@ -83,6 +84,8 @@ def write_timestamp(hex_str):
 
 def read_timestamp():
   hex_str = read_hnd(HND_TIMESTAMP)
+  if hex_str == "":
+      return 0
   return ut.hexStrToInt(hex_str)
 
 def read_device_id():
@@ -160,6 +163,62 @@ def read_bulk_values(timestamp_hex_str, callback_fun):
 
     callback_fun(sample_time, samples, ut.hexStrToBytes(values))
 
+def read_first_value():
+  ts = read_timestamp()
+  if ts == 0:
+      return None
+
+  timestamp_hex_str = ut.intToHexStr(ts-60)
+
+  write_req(HND_MODE, "0100")
+  print("starting bulk read from "+timestamp_hex_str)
+  write_req(HND_BULK_READ, timestamp_hex_str)
+
+  found_stop = False
+  while found_stop == False:
+    try:
+      child.expect("Notification handle = 0x001e value: ", timeout=10)
+    except:
+      print("no more data to read")
+      break
+    child.expect("\r\n")
+    values = child.before.decode().replace(" ","")
+    print("values = "+values)
+
+    if len(values) < 16:
+      print("No temp avail")
+      found_stop = True
+      break
+
+    sample_time_hexstr = values[0:8]
+    sample_time = ut.hexStrToInt(sample_time_hexstr)
+    if sample_time_hexstr == STOP_TOKEN:
+        sample_time = 0
+        found_stop = True
+    else:
+        sample_time = ut.hexStrToInt(sample_time_hexstr)
+    samples = ut.hexStrToSamples(values[8:])
+    for sample in samples:
+        if sample == STOP_TOKEN:
+            found_stop = True
+
+    rev = samples[::-1]
+    for j in range(len(samples)-1, 0, -1):
+        sample = samples[j]
+        sample_hex = sample[0:8]
+        if sample_hex != STOP_TOKEN:
+            sample_bytes = ut.hexStrToBytes(sample_hex)
+            ## add dummy byte to beginning
+            sample_bytes = bytearray([65])+sample_bytes
+            vals = sensorpush_parser.decode_values(sample_bytes, 65)
+            temp_c = vals["temperature"]
+            temp_f = ut.celsiusToFahrenheit(temp_c)
+            print("read latest got temp {}".format(temp_f))
+            return temp_f
+
+    return None
+
+    
 def read_latest(callback_fun):
     ts = read_timestamp()
     
@@ -172,7 +231,7 @@ def read_latest(callback_fun):
                 sample_bytes = ut.hexStrToBytes(sample_hex)
                 ## add dummy byte to beginning
                 sample_bytes = bytearray([65])+sample_bytes
-                vals = sensorpush.decode_values(sample_bytes, 65)
+                vals = sensorpush_parser.decode_values(sample_bytes, 65)
                 temp_c = vals["temperature"]
                 temp_f = ut.celsiusToFahrenheit(temp_c)
                 print("read latest got temp {}".format(temp_f))
@@ -181,3 +240,5 @@ def read_latest(callback_fun):
 
     read_start_time_hex = ut.intToHexStr(ts-60)
     read_bulk_values(read_start_time_hex, bulk_cb)
+
+

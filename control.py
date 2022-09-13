@@ -1,6 +1,7 @@
 from relay import Relay 
 import utils as ut
 from action import Action
+from mode import Mode
 
 class Control:
     id = 0
@@ -47,18 +48,19 @@ class Control:
 
     def apply_action(self, program, sensors):
         program_action = self.get_action(program, sensors)
-
-        if program_action == Action.WAIT_SATISFIED:
-            action = program_action
+        if program_action == None:
+            return
+        elif program_action == Action.WAIT_SATISFIED:
+            self.action = program_action
         elif program_action == Action.COMMAND_ON:
-            if action != Action.WAIT_SATISFIED:
-                action = Action.COMMAND_ON
+            if self.action != Action.WAIT_SATISFIED:
+                self.action = Action.COMMAND_ON
         elif program_action == Action.COMMAND_OFF:
-            if action != Action.WAIT_SATISFIED and action != Action.COMMAND_ON:
-                action = Action.COMMAND_OFF
+            if self.action != Action.WAIT_SATISFIED and self.action != Action.COMMAND_ON:
+                self.action = Action.COMMAND_OFF
         elif program_action == Action.WAIT_CALL:
-            if action != Action.WAIT_SATISFIED and action != Action.COMMAND_ON and action != Action.COMMAND_OFF:
-                action = Action.WAIT_CALL
+            if self.action != Action.WAIT_SATISFIED and self.action != Action.COMMAND_ON and self.action != Action.COMMAND_OFF:
+                self.action = Action.WAIT_CALL
 
     def execute_action(self):
         if self.action == Action.COMMAND_ON:
@@ -68,36 +70,38 @@ class Control:
      
     def get_action(self, program, sensors):
         sensor = next(x for x in sensors if x.id == program.sensor_id)
+        if sensor == None:
+            return None
 
         if self.is_on():
-            if self.is_satisfied(sensor.value, set_point, mode) and self.has_min_run():
+            if is_satisfied(sensor.value, program.set_point, self.mode) and self.has_min_run():
                 return Action["COMMAND_OFF"]
             else:
                 return Action["WAIT_SATISFIED"]
 
         else:
-            if self.is_call(sensor.value, set_point, mode) and self.has_min_rest():
+            if is_call_for_on(sensor.value, program.set_point, program.mode) and self.has_min_rest():
                 return Action["COMMAND_ON"]
             else:
                 return Action["WAIT_CALL"]
 
-    def is_satisfied(self, sensor_value, set_point, mode):
-        if mode == Mode.HEAT:
-            return sensor_value > set_point
+def is_satisfied(self, sensor_value, set_point, mode):
+    if mode == Mode.HEAT:
+        return sensor_value > set_point
 
-        elif mode == Mode.COOL:
-            return sensor_value < set_point
+    elif mode == Mode.COOL:
+        return sensor_value < set_point
 
-        else:
-            return True
+    else:
+        return True
 
-    def is_call(sensor_value, set_point, mode):
-        if mode == Mode.HEAT:
-            return sensor_value < set_point
+def is_call_for_on(sensor_value, set_point, mode):
+    if mode == Mode.HEAT:
+        return sensor_value < set_point
 
-        elif mode == Mode.COOL:
-            return sensor.value > set_point
+    elif mode == Mode.COOL:
+        return sensor.value > set_point
 
-        else:
-            return False
+    else:
+        return False
 

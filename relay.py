@@ -1,15 +1,20 @@
 import RPi.GPIO as gpio
+import logging
+
+logging.basicConfig(filename='phrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
+logging.getLogger(__name__).addHandler(logging.NullHandler())
+log = logging.getLogger("pyrexia")
 
 class Relay:
     on = gpio.HIGH
     off = gpio.LOW
-    id = 0
+    gpio_id = 0
     onhigh = True
 
-    def __init__(self, id, onhigh):
-        self.id = id
+    def __init__(self, gpio_id, onhigh):
+        self.gpio_id = gpio_id
         gpio.setmode(gpio.BCM)
-        gpio.setup(id, gpio.OUT)
+        gpio.setup(gpio_id, gpio.OUT)
 
         if onhigh == True or onhigh == 1:
             self.onhigh = True
@@ -22,13 +27,15 @@ class Relay:
 
     def command(self, onoff):
         if onoff == True:
-            gpio.output(self.id, self.on)
+            log.debug("relay gpio {} set to {}".format(self.gpio_id, self.on))
+            gpio.output(self.gpio_id, self.on)
         else:
-            gpio.output(self.id, self.off)
+            log.debug("relay gpio {} set to {}".format(self.gpio_id, self.off))
+            gpio.output(self.gpio_id, self.off)
 
     def is_on(self):
         if self.onhigh == True:
-            return gpio.input(self.id) == gpio.HIGH
+            return gpio.input(self.gpio_id) == gpio.HIGH
         else:
-            return gpio.input(self.id) == gpio.LOW
+            return gpio.input(self.gpio_id) == gpio.LOW
 

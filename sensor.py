@@ -1,7 +1,15 @@
-import sensorpush
+import sensorpush as sp
 import utils as ut
+import rest
+
+import logging
+import asyncio
 
 read_error = -999
+
+logging.basicConfig(filename='phrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
+logging.getLogger(__name__).addHandler(logging.NullHandler())
+log = logging.getLogger("pyrexia")
 
 class Sensor:
 
@@ -15,7 +23,7 @@ class Sensor:
     def __init__(self, id, name, addr, update_time, value, update_interval):
         self.id = id
         self.name = name,
-        self.addr
+        self.addr = addr
         self.update_time = update_time
         self.value = value
         self.update_interval = update_interval
@@ -31,30 +39,32 @@ class Sensor:
         return Sensor(sensor_id, name, addr, update_time, value, update_interval)
 
     def can_update(self):
-        return ut.currentTimeInt() - self.update_time > self.update_interval
+        is_interval_met = ut.currentTimeInt() - self.update_time > self.update_interval
 
+        log.debug("can_update {}  {} - {} > {}".format(is_interval_met, ut.currentTimeInt(), self.update_time, self.update_interval))
+        return is_interval_met 
 
-    def read_sensor(self):
-        if self.can_update():
-            return -999
+    async def read_sensor(self):
+        if not self.can_update():
+            return -901
 
         ## is sensorpush addr?
-        if addr[0:2] == "sp":
-            addr = addr[3:]
-            sp.connect(addr)
+        sensor_type = self.addr[0:2]
+        if sensor_type == "sp":
+            macaddr = self.addr[3:]
+            sp.connect(macaddr)
 
-            def cb(ts, temp):
-                print("sensor id {} temp={}".format(sensor_id, temp))
-                value = temp
-                rest.update_sensor_temp(sensor_id, temp)
-                return temp
+            temp = sp.read_first_value()
+            if temp == None:
+                return -902
+            self.value = temp
+            rest.update_sensor_temp(self.id, temp)
+            return temp 
 
-            try:
-                sp.read_latest(cb)
-            except:
-                return read_error
+        elif sensor_type == "gp":
+            return -903
 
-        return read_error 
-
+        else:
+            return -904
 
 
