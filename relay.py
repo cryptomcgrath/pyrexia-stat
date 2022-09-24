@@ -1,11 +1,12 @@
 import RPi.GPIO as gpio
 import logging
+from irelay import IRelay
 
 logging.basicConfig(filename='phrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 log = logging.getLogger("pyrexia")
 
-class Relay:
+class Relay(IRelay):
     on = gpio.HIGH
     off = gpio.LOW
     gpio_id = 0

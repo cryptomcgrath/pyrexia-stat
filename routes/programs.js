@@ -59,6 +59,32 @@ router.get("/:id", (req, res, next) => {
       })
 })
 
+router.post("/:id/set", (req, res, next) => {
+    var errors=[]
+    if (!req.body.value){
+        errors.push("Missing value")
+    }
+    if (errors.length){
+        res.status(400).json({"error":errors.join(",")})
+        return
+    }
+
+    var data = {
+        value: req.body.value
+    }
+    var params = [data.value, req.params.id]
+    var sql = "update programs set set_point=? where id=?"
+    db.run(sql, params, function (err, result) {
+        if (err){
+            res.status(400).json({"error": err.message})
+            return
+        }
+        res.json({
+            "message": "success",
+            "data": data
+        })
+    })
+})
 
 router.post("/", (req, res, next) => {
     var errors=[]
