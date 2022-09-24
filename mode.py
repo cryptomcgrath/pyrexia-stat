@@ -6,8 +6,9 @@ class Mode(Enum):
     NONE = "none"
 
     def from_string(s):
-        for m in Mode:
-            if m.name == s:
-                return m
+        if s == "heat":
+            return Mode.HEAT
+        if s == "cool":
+            return Mode.COOL
         return Mode['NONE']
 

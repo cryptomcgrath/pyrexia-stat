@@ -37,7 +37,7 @@ class Control:
     def is_on(self):
         return self.relay.is_on()
 
-    def has_rested(self):
+    def has_min_rest(self):
         return ut.currentTimeInt() - self.last_off_time > self.min_rest
 
     def has_min_run(self):
@@ -74,18 +74,21 @@ class Control:
             return None
 
         if self.is_on():
-            if is_satisfied(sensor.value, program.set_point, self.mode) and self.has_min_run():
+            if is_satisfied(sensor.value, program.set_point, program.mode) and self.has_min_run():
                 return Action["COMMAND_OFF"]
             else:
                 return Action["WAIT_SATISFIED"]
 
         else:
-            if is_call_for_on(sensor.value, program.set_point, program.mode) and self.has_min_rest():
-                return Action["COMMAND_ON"]
+            if is_call_for_on(sensor.value, program.set_point, program.mode):
+                if self.has_min_rest():
+                    return Action["COMMAND_ON"]
+                else:
+                    return Action["WAIT_REST"]
             else:
                 return Action["WAIT_CALL"]
 
-def is_satisfied(self, sensor_value, set_point, mode):
+def is_satisfied(sensor_value, set_point, mode):
     if mode == Mode.HEAT:
         return sensor_value > set_point
 
@@ -96,6 +99,7 @@ def is_satisfied(self, sensor_value, set_point, mode):
         return True
 
 def is_call_for_on(sensor_value, set_point, mode):
+    print("is_call_for_on sensor value {} set point {} mode {}".format(sensor_value, set_point, mode))
     if mode == Mode.HEAT:
         return sensor_value < set_point
 

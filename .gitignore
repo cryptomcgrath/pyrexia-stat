@@ -261,3 +261,8 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# pyrexia files
+db.pyrexia
+phrexia-debug.log
+

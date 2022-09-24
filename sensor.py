@@ -57,7 +57,7 @@ class Sensor:
             temp = sp.read_first_value()
             if temp == None:
                 return -902
-            self.value = temp
+            self.value = float(temp)
             rest.update_sensor_temp(self.id, temp)
             return temp 
 
