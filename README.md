@@ -16,7 +16,6 @@ A smart thermostat running on Raspberry Pi, Python, and Node.js<br>
   <li>Raspberry Pi OS</li>
 <li>python3</li>
 <li>Node.js</li>
-<li>sqlite3</li>
 <li>pm2</li>
 <br>
   
