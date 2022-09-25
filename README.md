@@ -20,5 +20,4 @@ A smart thermostat running on Raspberry Pi, Python, and Node.js<br>
 <li>pm2</li>
 <br>
   
-
-![image](https://user-images.githubusercontent.com/5443337/187974454-2e66458a-9668-4807-a1a1-eb1f25f0f4ab.png)
+![image](https://user-images.githubusercontent.com/5443337/192160872-86081805-009f-4953-9ad2-d1d7d47415e3.png)
