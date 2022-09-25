@@ -72,6 +72,9 @@ router.post("/", (req, res, next) => {
     if (!req.body.name){
         errors.push("No name specified")
     }
+    if (!req.body.sensor_type) {
+        errors.push("Missing sensor_type")
+    }
     if (!req.body.addr){
         errors.push("No addr specified")
     }
@@ -90,13 +93,14 @@ router.post("/", (req, res, next) => {
     }
     var data = {
         name: req.body.name,
+        sensor_type: req.sensor_type,
         addr: req.body.addr,
         update_time: req.body.update_time,
         value: req.body.value,
         update_interval: req.body.update_interval
     }
-    var sql ='INSERT INTO sensors (name, addr, update_time, value, update_interval) VALUES (?,?,?,?,?)'
-    var params =[data.name, data.addr, data.update_time, date.value, data.update_interval]
+    var sql ='INSERT INTO sensors (name, sensor_type, addr, update_time, value, update_interval) VALUES (?,?,?,?,?)'
+    var params =[data.name, data.sensor_type, data.addr, data.update_time, date.value, data.update_interval]
     db.run(sql, params, function (err, result) {
         if (err){
             res.status(400).json({"error": err.message})
@@ -113,6 +117,7 @@ router.post("/", (req, res, next) => {
 router.patch("/:id", (req, res, next) => {
     var data = {
         name: req.body.name,
+        sensor_type: req.body.sensor_type,
         addr: req.body.addr,
         update_time : req.body.update_time,
         value: req.body.value,
@@ -121,12 +126,13 @@ router.patch("/:id", (req, res, next) => {
     db.run(
         `UPDATE sensors set 
            name = COALESCE(?,name), 
+           sensor_type = COALESCE(?,sensor_type),
            addr = COALESCE(?,addr), 
            update_time = COALESCE(?,update_time),
            value = COALESCE(?,value),
            update_interval = COALESCE(?, update_interval)
            WHERE id = ?`,
-        [data.name, data.addr, data.update_time, data.value, data.update_interval, req.params.id],
+        [data.name, data.sensor_type, data.addr, data.update_time, data.value, data.update_interval, req.params.id],
         function (err, result) {
             if (err){
                 res.status(400).json({"error": res.message})

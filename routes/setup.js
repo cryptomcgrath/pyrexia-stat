@@ -20,9 +20,9 @@ router.post("/init", (req, res, next) => {
 
         // sensors
         db.run('drop table if exists sensors')
-        db.run('CREATE TABLE sensors (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, addr text, update_time integer, value float, update_interval integer)')
-        var insert = 'INSERT INTO sensors (name, addr, update_time, value, update_interval) VALUES (?, ?, ?, ?, ?)'
-        db.run(insert, ['valve bay', 'sp/A4:34:F1:7F:CD:D8', 0, 0, 300])
+        db.run('CREATE TABLE sensors (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, sensor_type text, addr text, update_time integer, value float, update_interval integer)')
+        var insert = 'INSERT INTO sensors (name, sensor_type, addr, update_time, value, update_interval) VALUES (?, ?, ?, ?, ?, ?)'
+        db.run(insert, ['valve bay', 'sp', 'A4:34:F1:7F:CD:D8', 0, 0, 300])
 
         // controls
         db.run('drop table if exists controls')
@@ -35,6 +35,10 @@ router.post("/init", (req, res, next) => {
         db.run('CREATE TABLE programs (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, mode text, enabled bool, sensor_id INTEGER, set_point FLOAT, control_id INT)') 	
         var insert = 'INSERT INTO PROGRAMS (name, mode, enabled, sensor_id, set_point, control_id) VALUES (?, ?, ?, ?, ?, ?)'
         db.run(insert, ['heat', 'heat', true, 1, 65.0, 1])
+
+        // history
+        db.run('drop table if exists history')
+        db.run('CREATE TABLE history (id INTEGER PRIMARY KEY AUTOINCREMENT, program_id INT, action_ts INT, sensor_id INT, sensor_value float, control_id INT, control_on bool, action TEXT)')
 
         db.run('drop table if exists config')
         db.run('CREATE TABLE config (key text, value text)')

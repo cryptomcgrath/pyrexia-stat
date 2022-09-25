@@ -7,7 +7,7 @@ from sensor import Sensor
 from control import Control
 from program import Program
 
-logging.basicConfig(filename='phrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 log = logging.getLogger("pyrexia")
@@ -86,3 +86,14 @@ def get_programs_list():
         pass
 
     return programs
+
+def add_history(program_id, sensor_id, sensor_value, control_id, control_on, action):
+    print("{} {} {} {} {} {}".format(program_id, sensor_id, sensor_value, control_id, control_on, action))
+    url = base_url + "/history/"
+    update_time = ut.currentTimeInt()
+    obj = {'program_id': program_id, 'action_ts': update_time, 'sensor_id': sensor_id, 'sensor_value': sensor_value, 'control_id': control_id, 'control_on': int(control_on==True), 'action': action}
+    print("{}".format(obj))
+    res = requests.post(url, json = obj)
+    return res
+
+     

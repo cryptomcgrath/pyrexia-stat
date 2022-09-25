@@ -5,13 +5,15 @@ import control
 import sensor
 
 class Program:
+    id = 0
     name = ""
     sensor_id = 0 
     control_id = 0
     set_point = 0
     mode = Mode['NONE']
 
-    def __init__(self, name, sensor_id, control_id, set_point, mode):
+    def __init__(self, id, name, sensor_id, control_id, set_point, mode):
+        self.id = id
         self.name = name
         self.sensor_id = sensor_id
         self.control_id = control_id
@@ -20,5 +22,5 @@ class Program:
 
     def from_dict(dict):
         name = dict["name"]
-        return Program(dict["name"], dict["sensor_id"], dict["control_id"], dict["set_point"], Mode.from_string(dict["mode"]))
+        return Program(dict["id"], dict["name"], dict["sensor_id"], dict["control_id"], dict["set_point"], Mode.from_string(dict["mode"]))
 

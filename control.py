@@ -2,6 +2,7 @@ from relay import Relay
 import utils as ut
 from action import Action
 from mode import Mode
+import rest
 
 class Control:
     id = 0
@@ -47,7 +48,15 @@ class Control:
         self.relay.command(onoff)
 
     def apply_action(self, program, sensors):
-        program_action = self.get_action(program, sensors)
+        program_sensor = next(x for x in sensors if x.id == program.sensor_id)
+        if program_sensor == None:
+            return None
+
+        program_action = self.get_action(program, program_sensor)
+
+        # log to history
+        rest.add_history(program.id, program_sensor.id, program_sensor.value, self.id, self.is_on(), program_action.name)
+
         if program_action == None:
             return
         elif program_action == Action.WAIT_SATISFIED:
@@ -68,19 +77,15 @@ class Control:
         elif self.action == Action.COMMAND_OFF:
             self.command(False)
      
-    def get_action(self, program, sensors):
-        sensor = next(x for x in sensors if x.id == program.sensor_id)
-        if sensor == None:
-            return None
-
+    def get_action(self, program, program_sensor):
         if self.is_on():
-            if is_satisfied(sensor.value, program.set_point, program.mode) and self.has_min_run():
+            if is_satisfied(program_sensor.value, program.set_point, program.mode) and self.has_min_run():
                 return Action["COMMAND_OFF"]
             else:
                 return Action["WAIT_SATISFIED"]
 
         else:
-            if is_call_for_on(sensor.value, program.set_point, program.mode):
+            if is_call_for_on(program_sensor.value, program.set_point, program.mode):
                 if self.has_min_rest():
                     return Action["COMMAND_ON"]
                 else:
