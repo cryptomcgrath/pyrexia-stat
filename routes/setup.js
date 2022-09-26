@@ -38,7 +38,7 @@ router.post("/init", (req, res, next) => {
 
         // history
         db.run('drop table if exists history')
-        db.run('CREATE TABLE history (id INTEGER PRIMARY KEY AUTOINCREMENT, program_id INT, action_ts INT, sensor_id INT, sensor_value float, control_id INT, control_on bool, action TEXT)')
+        db.run('CREATE TABLE history (id INTEGER PRIMARY KEY AUTOINCREMENT, program_id INT, set_point FLOAT, action_ts INT, sensor_id INT, sensor_value float, control_id INT, control_on bool, action TEXT)')
 
         db.run('drop table if exists config')
         db.run('CREATE TABLE config (key text, value text)')

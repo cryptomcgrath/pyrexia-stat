@@ -56,6 +56,7 @@ router.post("/", (req, res, next) => {
     }
     var data = {
         program_id: req.body.program_id,
+        set_point: req.body.set_point,
         control_id: req.body.control_id,
         sensor_id: req.body.sensor_id,
         sensor_value: req.body.sensor_value,
@@ -63,8 +64,8 @@ router.post("/", (req, res, next) => {
         action_ts: req.body.action_ts,
         action: req.body.action
     }
-    var sql ='INSERT INTO history (program_id, control_id, sensor_id, sensor_value, control_on, action_ts, action) values (?,?,?,?,?,?,?)'
-    var params =[data.program_id, data.control_id, data.sensor_id, data.sensor_value, data.control_on, data.action_ts, data.action]
+    var sql ='INSERT INTO history (program_id, set_point, control_id, sensor_id, sensor_value, control_on, action_ts, action) values (?,?,?,?,?,?,?,?)'
+    var params =[data.program_id, data.set_point, data.control_id, data.sensor_id, data.sensor_value, data.control_on, data.action_ts, data.action]
     db.run(sql, params, function (err, result) {
         if (err){
             res.status(400).json({"error": err.message})

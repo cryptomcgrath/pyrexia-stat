@@ -55,7 +55,7 @@ class Control:
         program_action = self.get_action(program, program_sensor)
 
         # log to history
-        rest.add_history(program.id, program_sensor.id, program_sensor.value, self.id, self.is_on(), program_action.name)
+        rest.add_history(program.id, program.set_point, program_sensor.id, program_sensor.value, self.id, self.is_on(), program_action.name)
 
         if program_action == None:
             return
