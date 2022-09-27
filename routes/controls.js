@@ -39,6 +39,44 @@ router.get("/:id", (req, res, next) => {
         })
       })
 })
+ 
+router.post("/:id/on", (req, res, next) => {
+    var now_seconds = Math.floor(Date.now() / 1000)
+    var data = { update_time: now_seconds }
+    var params = [data.update_time, req.params.id]
+    db.run(
+        'UPDATE controls set last_on_time=?, control_on=1 where id=?',
+        params, function (err, result) {
+            if (err){
+                res.status(400).json({"error": err.message})
+                return
+            }
+            res.json({
+                "message": "success",
+                "data": data,
+            })
+        }
+    )
+})
+
+router.post("/:id/off", (req, res, next) => {
+    var now_seconds = Math.floor(Date.now() / 1000)
+    var data = { update_time: now_seconds }
+    var params = [data.update_time, req.params.id]
+    db.run(
+        'UPDATE controls set last_off_time=?, control_on=0 where id=?',
+        params, function (err, result) {
+            if (err){
+                res.status(400).json({"error": err.message})
+                return
+            }
+            res.json({
+                "message": "success",
+                "data": data,
+            })
+        }
+    )
+})
 
 
 router.post("/", (req, res, next) => {

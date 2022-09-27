@@ -39,6 +39,7 @@ class Control:
         return self.relay.is_on()
 
     def has_min_rest(self):
+        print("has_min_rest {} - {} > {}",ut.currentTimeInt(), self.last_off_time, self.min_rest)
         return ut.currentTimeInt() - self.last_off_time > self.min_rest
 
     def has_min_run(self):
@@ -73,19 +74,25 @@ class Control:
 
     def execute_action(self):
         if self.action == Action.COMMAND_ON:
+            rest.control_on(self.id)
             self.command(True)
         elif self.action == Action.COMMAND_OFF:
+            rest.control_off(self.id)
             self.command(False)
      
     def get_action(self, program, program_sensor):
         if self.is_on():
-            if is_satisfied(program_sensor.value, program.set_point, program.mode) and self.has_min_run():
+            if program.enabled == False:
+                return Action["COMMAND_OFF"]
+            elif is_satisfied(program_sensor.value, program.set_point, program.mode) and self.has_min_run():
                 return Action["COMMAND_OFF"]
             else:
                 return Action["WAIT_SATISFIED"]
 
         else:
-            if is_call_for_on(program_sensor.value, program.set_point, program.mode):
+            if program.enabled == False:
+                return Action["DISABLED"]
+            elif is_call_for_on(program_sensor.value, program.set_point, program.mode):
                 if self.has_min_rest():
                     return Action["COMMAND_ON"]
                 else:

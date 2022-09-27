@@ -25,7 +25,8 @@ router.get("/list", (req, res, next) => {
                       c.min_Rest,
                       c.min_run,
                       c.gpio,
-                      c.gpio_on_hi
+                      c.gpio_on_hi,
+                      c.control_on
         from programs p, sensors s, controls c
         WHERE p.sensor_id = s.id and
         p.control_id = c.id order by p.control_id, p.id`
@@ -58,7 +59,8 @@ router.get("/:id", (req, res, next) => {
                       c.min_Rest,
                       c.min_run,
                       c.gpio,
-                      c.gpio_on_hi
+                      c.gpio_on_hi,
+                      c.control_on
         from programs p, sensors s, controls c
         WHERE p.sensor_id = s.id and
         p.control_id = c.id and p.id = ?`

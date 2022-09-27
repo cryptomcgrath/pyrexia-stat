@@ -37,11 +37,12 @@ async def main():
                     # run the programs and determine the actions
                     for program in programs:
                         sensor = next(x for x in sensors if x.id == program.sensor_id)
-                        v = await sensor.read_sensor()
-                        log.debug("read_sensor {} {} returned {}".format(sensor.name, sensor.id, v))
-                        if v > -900:
-                            control = next(x for x in controls if x.id == program.control_id)
-                            control.apply_action(program, sensors)
+                        if program.enabled == True:
+                            v = await sensor.read_sensor()
+                            log.debug("read_sensor {} {} returned {}".format(sensor.name, sensor.id, v))
+                            if v > -900:
+                                control = next(x for x in controls if x.id == program.control_id)
+                                control.apply_action(program, sensors)
 
                     # execute the actions
                     for control in controls:

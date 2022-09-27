@@ -30,6 +30,14 @@ def update_sensor_temp(id, temp):
     res = requests.post(url, json = obj)
     return res
 
+def control_on(id):
+    url = base_url + "/controls/"+str(id)+"/on"
+    res = requests.post(url)
+
+def control_off(id):
+    url = base_url + "/controls/"+str(id)+"/off"
+    res = requests.post(url)
+
 def get_programs():
     url = base_url + "/programs"
     res = requests.get(url)

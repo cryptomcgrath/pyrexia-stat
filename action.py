@@ -6,3 +6,4 @@ class Action(Enum):
     WAIT_SATISFIED = "WAIT_SATISFIED"
     WAIT_CALL = "WAIT_CALL"
     WAIT_REST = "WAIT_REST"
+    DISABLED = "DISABLED"
