@@ -28,14 +28,14 @@ router.post("/init", (req, res, next) => {
         db.run('drop table if exists controls')
         db.run('CREATE TABLE controls (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, min_rest INT, last_off_time INT, last_on_time INT, min_run INT, gpio INT, gpio_on_hi bool, control_on bool)')
 
-        var insert = 'INSERT INTO controls (name, min_rest, last_off_time, last_on_time, min_run, gpio, gpio_on_hi) VALUES (?, ?, ?, ?, ?, ?, ?)'
-        db.run(insert, ['furnace', 180, 0, 0, 180, 5, true])
+        var insert = 'INSERT INTO controls (name, min_rest, last_off_time, last_on_time, min_run, gpio, gpio_on_hi. control_on) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+        db.run(insert, ['furnace', 180, 0, 0, 180, 5, true, false])
 
         // programs
         db.run('drop table if exists programs')
         db.run('CREATE TABLE programs (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, mode text, enabled bool, sensor_id INTEGER, set_point FLOAT, control_id INT)') 	
         var insert = 'INSERT INTO PROGRAMS (name, mode, enabled, sensor_id, set_point, control_id) VALUES (?, ?, ?, ?, ?, ?)'
-        db.run(insert, ['heat', 'heat', true, 1, 65.0, 1])
+        db.run(insert, ['valve bay', 'heat', true, 1, 65.0, 1])
 
         // history
         db.run('drop table if exists history')
