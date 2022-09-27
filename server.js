@@ -10,6 +10,7 @@ const setupRouter = require('./routes/setup.js')
 const controlsRouter = require('./routes/controls.js')
 const programsRouter = require('./routes/programs.js')
 const historyRouter = require('./routes/history.js')
+const statRouter = require('./routes/stat.js')
 
 // server listen
 var PORT = 8000
@@ -28,6 +29,7 @@ app.use('/setup', setupRouter)
 app.use('/controls', controlsRouter)
 app.use('/programs', programsRouter)
 app.use('/history', historyRouter)
+app.use('/stat', statRouter)
 
 // default response for any other request
 app.use(function(req, res) {

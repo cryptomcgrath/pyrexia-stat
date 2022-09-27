@@ -25,11 +25,24 @@ router.get("/", (req, res, next) => {
 })
 
 router.get("/run", (req, res, next) => {
-    var sql = `SELECT p.name as program_name, p.sensor_id, s.value, p.control_id, c.name as control_name, p.mode,
-        p.set_point, c.last_off_time, c.last_on_time, c.min_Rest, c.min_run,
-        c.gpio, c.gpio_on_hi
+    var sql = `SELECT p.id as program_id,
+                      p.name as program_name,
+                      p.sensor_id,
+                      s.name as sensor_name,
+                      s.value as sensor_value,
+                      p.mode,
+                      p.enabled,
+                      p.set_point,
+                      p.control_id,
+                      c.name as control_name,
+                      c.last_off_time,
+                      c.last_on_time,
+                      c.min_Rest,
+                      c.min_run,
+                      c.gpio,
+                      c.gpio_on_hi
         from programs p, sensors s, controls c
-        WHERE p.enabled = 1 and p.sensor_id = s.id and
+        WHERE p.sensor_id = s.id and
         p.control_id = c.id order by p.control_id, p.id`
     var params = []
     db.all(sql, params, (err, rows) => {
