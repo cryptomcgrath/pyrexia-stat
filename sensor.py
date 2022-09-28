@@ -1,7 +1,8 @@
-import sensorpush as sp
 import utils as ut
 import rest
-from isensor import ISensor
+from sensor_hook import SensorHook
+from sp_sensor_hook import SpSensorHook
+from null_sensor_hook import NullSensorHook
 
 import logging
 import asyncio
@@ -12,7 +13,7 @@ logging.basicConfig(filename='phyexia-debug.log', encoding='utf-8', level=loggin
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 log = logging.getLogger("pyrexia")
 
-class Sensor(ISensor):
+class Sensor:
 
     id = 0
     name = ""
@@ -21,7 +22,7 @@ class Sensor(ISensor):
     update_time = 0
     value = 0.0
     update_interval = 0
-    sensor_impl = None
+    hook = None
 
     def __init__(self, id, name, sensor_type, addr, update_time, value, update_interval):
         self.id = id
@@ -32,10 +33,12 @@ class Sensor(ISensor):
         self.value = value
         self.update_interval = update_interval
 
-        #sensor_type = addr[0:2]
-        #if sensor_type == "sp":
-        #    sensor_impl = SpSensor(addr)
-        #elif sensor_type == "hw":
+        if sensor_type == "sp":
+            self.hook = SpSensorHook(addr)
+        #elif sensor_type == "dht22":
+        #    self.hook = DhtSensorHook(addr)
+        else:
+            self.hook = NullSensorHook(addr)
 
 
     def from_dict(dict):
@@ -51,29 +54,17 @@ class Sensor(ISensor):
     def can_update(self):
         is_interval_met = ut.currentTimeInt() - self.update_time > self.update_interval
 
-        log.debug("can_update {}  {} - {} > {}".format(is_interval_met, ut.currentTimeInt(), self.update_time, self.update_interval))
+        log.debug("can_update {}  {} - {} > {} = {}".format(is_interval_met, ut.currentTimeInt(), self.update_time, self.update_interval, is_interval_met))
         return is_interval_met 
 
     async def read_sensor(self):
         if not self.can_update():
             return -901
 
-        ## is sensorpush addr?
-        if self.sensor_type == "sp":
-            macaddr = self.addr
-            sp.connect(macaddr)
-
-            temp = sp.read_first_value()
-            if temp == None:
-                return -902
-            self.value = float(temp)
-            rest.update_sensor_temp(self.id, temp)
-            return temp 
-
-        elif self.sensor_type == "gp":
-            return -903
-
-        else:
-            return -904
+        t = self.hook.read_sensor()
+        self.value = t
+        self.update_time = ut.currentTimeInt()
+        rest.update_sensor_temp(self.id, t)
+        return t
 
 
