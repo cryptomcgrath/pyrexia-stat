@@ -18,6 +18,13 @@ router.post("/init", (req, res, next) => {
         var insert = 'INSERT INTO user (email, password) VALUES (?,?)'
         db.run(insert, ["edward@edwardmcgrath.com", md5("test1234")])
 
+        // sensor_types
+        db.run('drop table if exists sensor_types')
+        db.run('CREATE TABLE sensor_types (sensor_type text PRIMARY_KEY, name text, hook_file text)')
+        var insert = 'INSERT INTO sensor_types (sensor_type, name, hook_file) VALUES (?,?,?)'
+        db.run(insert, ['sp', 'SensorPush HW.t Bluetooth Sensor', 'sp_sensor_hook.py'])
+        db.run(insert, ['dht22', 'DHT22 Temperature Sensor', 'dht22_sensor_hook.py'])
+
         // sensors
         db.run('drop table if exists sensors')
         db.run('CREATE TABLE sensors (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, sensor_type text, addr text, update_time integer, value float, update_interval integer)')
@@ -28,14 +35,14 @@ router.post("/init", (req, res, next) => {
         db.run('drop table if exists controls')
         db.run('CREATE TABLE controls (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, min_rest INT, last_off_time INT, last_on_time INT, min_run INT, gpio INT, gpio_on_hi bool, control_on bool)')
 
-        var insert = 'INSERT INTO controls (name, min_rest, last_off_time, last_on_time, min_run, gpio, gpio_on_hi. control_on) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+        var insert = 'INSERT INTO controls (name, min_rest, last_off_time, last_on_time, min_run, gpio, gpio_on_hi, control_on) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
         db.run(insert, ['furnace', 180, 0, 0, 180, 5, true, false])
 
         // programs
         db.run('drop table if exists programs')
         db.run('CREATE TABLE programs (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, mode text, enabled bool, sensor_id INTEGER, set_point FLOAT, control_id INT)') 	
         var insert = 'INSERT INTO PROGRAMS (name, mode, enabled, sensor_id, set_point, control_id) VALUES (?, ?, ?, ?, ?, ?)'
-        db.run(insert, ['valve bay', 'heat', true, 1, 65.0, 1])
+        db.run(insert, ['valve bay', 'heat', true, 1, 60.0, 1])
 
         // history
         db.run('drop table if exists history')
