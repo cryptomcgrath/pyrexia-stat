@@ -49,7 +49,7 @@ class Control:
         self.relay.command(onoff)
 
     def apply_action(self, program, sensors):
-        program_sensor = next(x for x in sensors if x.id == program.sensor_id)
+        program_sensor = next((x for x in sensors if x.id == program.sensor_id), None)
         if program_sensor == None:
             return None
 
@@ -83,7 +83,7 @@ class Control:
     def get_action(self, program, program_sensor):
         if self.is_on():
             if program.enabled == False:
-                return Action["COMMAND_OFF"]
+                return Action["DISABLED"]
             elif is_satisfied(program_sensor.value, program.set_point, program.mode) and self.has_min_run():
                 return Action["COMMAND_OFF"]
             else:

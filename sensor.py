@@ -3,6 +3,7 @@ import rest
 from sensor_hook import SensorHook
 from sp_sensor_hook import SpSensorHook
 from null_sensor_hook import NullSensorHook
+from dht_sensor_hook import DhtSensorHook
 
 import logging
 import asyncio
@@ -35,8 +36,8 @@ class Sensor:
 
         if sensor_type == "sp":
             self.hook = SpSensorHook(addr)
-        #elif sensor_type == "dht22":
-        #    self.hook = DhtSensorHook(addr)
+        elif sensor_type == "dht22":
+            self.hook = DhtSensorHook(addr)
         else:
             self.hook = NullSensorHook(addr)
 
@@ -62,9 +63,10 @@ class Sensor:
             return -901
 
         t = self.hook.read_sensor()
-        self.value = t
-        self.update_time = ut.currentTimeInt()
-        rest.update_sensor_temp(self.id, t)
+        if t > -900:
+            self.value = t
+            self.update_time = ut.currentTimeInt()
+            rest.update_sensor_temp(self.id, t)
         return t
 
 
