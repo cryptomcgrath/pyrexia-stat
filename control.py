@@ -51,26 +51,28 @@ class Control:
     def apply_action(self, program, sensors):
         program_sensor = next((x for x in sensors if x.id == program.sensor_id), None)
         if program_sensor == None:
+            log.debug("program id {} could not locate sensor id {}".format(program.id, program.sensor_id))
             return None
 
         program_action = self.get_action(program, program_sensor)
+        rest.update_program_action(program.id, program_action.name)
 
-        # log to history
-        rest.add_history(program.id, program.set_point, program_sensor.id, program_sensor.value, self.id, self.is_on(), program_action.name)
-
-        if program_action == None:
-            return
-        elif program_action == Action.WAIT_SATISFIED:
+        if program_action == Action.WAIT_SATISFIED:
             self.action = program_action
         elif program_action == Action.COMMAND_ON:
-            if self.action != Action.WAIT_SATISFIED:
+            if self.action != Action.WAIT_SATISFIED and self.action != Action.WAIT_REST:
                 self.action = Action.COMMAND_ON
         elif program_action == Action.COMMAND_OFF:
-            if self.action != Action.WAIT_SATISFIED and self.action != Action.COMMAND_ON:
+            if self.action != Action.WAIT_SATISFIED and self.action != Action.COMMAND_ON and self.action != Action.WAIT_MIN_RUN:
                 self.action = Action.COMMAND_OFF
         elif program_action == Action.WAIT_CALL:
             if self.action != Action.WAIT_SATISFIED and self.action != Action.COMMAND_ON and self.action != Action.COMMAND_OFF:
                 self.action = Action.WAIT_CALL
+        else:
+            self.action = program_action
+
+        # log to history
+        rest.add_history(program.id, program.set_point, program_sensor.id, program_sensor.value, self.id, self.is_on(), program_action.name, self.action.name)
 
     def execute_action(self):
         if self.action == Action.COMMAND_ON:
@@ -81,24 +83,25 @@ class Control:
             self.command(False)
      
     def get_action(self, program, program_sensor):
-        if self.is_on():
-            if program.enabled == False:
-                return Action["DISABLED"]
-            elif is_satisfied(program_sensor.value, program.set_point, program.mode) and self.has_min_run():
-                return Action["COMMAND_OFF"]
+        if program.enabled == False:
+            return Action.DISABLED
+
+        if self.is_on() and program.last_action_on():
+            if is_satisfied(program_sensor.value, program.set_point, program.mode):
+                if self.has_min_run():
+                    return Action["COMMAND_OFF"]
+                else:
+                    return Action["WAIT_MIN_RUN"]
             else:
                 return Action["WAIT_SATISFIED"]
 
-        else:
-            if program.enabled == False:
-                return Action["DISABLED"]
-            elif is_call_for_on(program_sensor.value, program.set_point, program.mode):
-                if self.has_min_rest():
-                    return Action["COMMAND_ON"]
-                else:
-                    return Action["WAIT_REST"]
+        elif is_call_for_on(program_sensor.value, program.set_point, program.mode):
+            if self.has_min_rest():
+                return Action["COMMAND_ON"]
             else:
-                return Action["WAIT_CALL"]
+                return Action["WAIT_REST"]
+        else:
+            return Action["WAIT_CALL"]
 
 def is_satisfied(sensor_value, set_point, mode):
     if mode == Mode.HEAT:

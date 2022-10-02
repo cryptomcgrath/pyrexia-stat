@@ -10,6 +10,7 @@ import utils as ut
 import relay
 import rest
 from program import Program
+from action import Action
 
 logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -21,6 +22,15 @@ async def main():
     poll_interval = 30
 
     try:
+
+        # initialize controls to OFF
+        controls = rest.get_controls_list()
+        for control in controls:
+            control.action = Action.COMMAND_OFF
+            log.debug("init control {} -> {}".format(control.id, control.action.name))
+            control.execute_action()
+
+        # polling loop
         while True:
             if ut.currentTimeInt() - last_poll_time > poll_interval: 
                 last_poll_time = ut.currentTimeInt()

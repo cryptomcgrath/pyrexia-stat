@@ -46,8 +46,11 @@ router.post("/", (req, res, next) => {
     if (!req.body.action_ts){
         errors.push("No action_ts specified")
     }
-    if (!req.body.action) {
-        errors.push("No action specified")
+    if (!req.body.program_action) {
+        errors.push("No program_action specified")
+    }
+    if (!req.body.control_action) {
+        errors.push("No control_action")
     }
 
     if (errors.length){
@@ -62,10 +65,11 @@ router.post("/", (req, res, next) => {
         sensor_value: req.body.sensor_value,
         control_on: req.body.control_on,
         action_ts: req.body.action_ts,
-        action: req.body.action
+        program_action: req.body.program_action,
+        control_action: req.body.control_action
     }
-    var sql ='INSERT INTO history (program_id, set_point, control_id, sensor_id, sensor_value, control_on, action_ts, action) values (?,?,?,?,?,?,?,?)'
-    var params =[data.program_id, data.set_point, data.control_id, data.sensor_id, data.sensor_value, data.control_on, data.action_ts, data.action]
+    var sql ='INSERT INTO history (program_id, set_point, control_id, sensor_id, sensor_value, control_on, action_ts, program_action, control_action) values (?,?,?,?,?,?,?,?,?)'
+    var params =[data.program_id, data.set_point, data.control_id, data.sensor_id, data.sensor_value, data.control_on, data.action_ts, data.program_action, data.control_action]
     db.run(sql, params, function (err, result) {
         if (err){
             res.status(400).json({"error": err.message})

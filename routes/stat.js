@@ -86,7 +86,7 @@ router.post("/:id/increase", (req, res, next) => {
             return
         }
         res.json({
-            "message": "success",
+            "message": "success"
         })
     })
 })
@@ -100,10 +100,40 @@ router.post("/:id/decrease", (req, res, next) => {
             return
         }
         res.json({
-            "message": "success",
+            "message": "success"
         })
     })
 })
+
+router.post("/:id/enable", (req, res, next) => {
+    var params =[req.params.id]
+    var sql = "update programs set enabled=1 where id=?"
+    db.run(sql, params, function (err, result) {
+        if (err){
+            res.status(400).json({"error": err.message})
+            return
+        }
+        res.json({
+            "message": "success"
+        })
+    })
+})
+
+router.post("/:id/disable", (req, res, next) => {
+    var params =[req.params.id]
+    var sql = "update programs set enabled=0 where id=?"
+    db.run(sql, params, function (err, result) {
+        if (err){
+            res.status(400).json({"error": err.message})
+            return
+        }
+        res.json({
+            "message": "success"
+        })
+    })
+})
+
+
 
 module.exports = router
 

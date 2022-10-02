@@ -38,6 +38,12 @@ def control_off(id):
     url = base_url + "/controls/"+str(id)+"/off"
     res = requests.post(url)
 
+def update_program_action(id, action):
+    url = base_url + "/programs/"+str(id)+"/action"
+    obj = {'action': action}
+    res = requests.post(url, json = obj)
+    return res
+
 def get_programs():
     url = base_url + "/programs"
     res = requests.get(url)
@@ -95,11 +101,10 @@ def get_programs_list():
 
     return programs
 
-def add_history(program_id, set_point, sensor_id, sensor_value, control_id, control_on, action):
-    print("{} {} {} {} {} {}".format(program_id, sensor_id, sensor_value, control_id, control_on, action))
+def add_history(program_id, set_point, sensor_id, sensor_value, control_id, control_on, program_action, control_action):
     url = base_url + "/history/"
     update_time = ut.currentTimeInt()
-    obj = {'program_id': program_id, 'set_point': set_point, 'action_ts': update_time, 'sensor_id': sensor_id, 'sensor_value': sensor_value, 'control_id': control_id, 'control_on': int(control_on==True), 'action': action}
+    obj = {'program_id': program_id, 'set_point': set_point, 'action_ts': update_time, 'sensor_id': sensor_id, 'sensor_value': sensor_value, 'control_id': control_id, 'control_on': int(control_on==True), 'program_action': program_action, 'control_action': control_action}
     print("{}".format(obj))
     res = requests.post(url, json = obj)
     return res

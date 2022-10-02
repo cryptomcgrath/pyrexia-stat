@@ -99,6 +99,34 @@ router.post("/:id/set", (req, res, next) => {
     })
 })
 
+router.post("/:id/action", (req, res, next) => {
+    var errors=[]
+    if (!req.body.action){
+        errors.push("Missing action")
+    }
+    if (errors.length){
+        res.status(400).json({"error":errors.join(",")})
+        return
+    }
+
+    var data = {
+        last_action: req.body.action
+    }
+    var params = [data.last_action, req.params.id]
+    var sql = "update programs set last_action=? where id=?"
+    db.run(sql, params, function (err, result) {
+        if (err){
+            res.status(400).json({"error": err.message})
+            return
+        }
+        res.json({
+            "message": "success",
+            "data": data
+        })
+    })
+})
+
+
 router.post("/", (req, res, next) => {
     var errors=[]
     if (!req.body.name){
