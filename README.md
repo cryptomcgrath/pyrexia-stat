@@ -12,8 +12,8 @@ A smart thermostat running on Raspberry Pi, Python, and Node.js<br>
 <dd>To read the temperature in a remote location over bluetooth</dd>
 <dd>SensorPush HT.w Wireless Thermometer/Hygrometer Water-Resistant for iPhone/Android. USA Made Indoor/Outdoor Humidity/Temperature/Dewpoint/VPD Monitor/Logger. Smart Sensor with Alerts https://a.co/d/4TTQPGd</dd>
 <dt>Supports DHT22 temperature sensor(s)</dt>
-<dd>To read the temperature at the thermostat location</dd>
-  <dd>Using python Adafruit_DHT driver:  sudo pip3 install Adafruit_DHT</dd>
+<dd>Using python Adafruit_DHT driver:  sudo pip3 install Adafruit_DHT</dd>
+<dd>To read the temperature at the thermostat location https://a.co/d/f59G0Zk</dd>
 
 <br>
 <p>Software:</p>
