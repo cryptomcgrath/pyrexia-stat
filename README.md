@@ -1,7 +1,7 @@
 # pyrexia-stat
 
 A smart thermostat running on Raspberry Pi, Python, and Node.js<br>
-<br>
+This is the core thermostat control code that runs on the Pi.<br>Once setup, can be monitored and controlled using https://github.com/cryptomcgrath/pyrexia-android<br>
 <p>Hardware:</p>
 <dl>
 <dt>Raspberry Pi Zero 2W</dt>
