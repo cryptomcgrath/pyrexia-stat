@@ -5,12 +5,14 @@ A smart thermostat running on Raspberry Pi, Python, and Node.js<br>
 <p>Hardware:</p>
 <dl>
 <dt>Raspberry Pi Zero 2W</dt>
-<dt>Supports GPIO high and low triggered Relay boards</dt>
+<dd>Should also work with any Raspberry Pi hardware</dd>
+<dt>Supports any GPIO high and/or low triggered Relay boards</dt>
 <dd>To control furnace, boiler, and/or A/C
-<dt>Supports Sensorpush HT.w Bluetooth temperature sensor</dt>
+<dt>Optionally Supports Sensorpush HT.w Bluetooth temperature sensor</dt>
 <dd>To read the temperature in a remote location over bluetooth</dd>
 <dd>SensorPush HT.w Wireless Thermometer/Hygrometer Water-Resistant for iPhone/Android. USA Made Indoor/Outdoor Humidity/Temperature/Dewpoint/VPD Monitor/Logger. Smart Sensor with Alerts https://a.co/d/4TTQPGd</dd>
 <dt>Supports DHT22 temperature sensor(s)</dt>
+<dd>To read the temperature at the thermostat location</dd>  
 
 <br>
 <p>Software:</p>
