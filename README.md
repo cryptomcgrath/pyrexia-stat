@@ -10,6 +10,7 @@ A smart thermostat running on Raspberry Pi, Python, and Node.js<br>
 <dt>Supports Sensorpush HT.w Bluetooth temperature sensor</dt>
 <dd>To read the temperature in a remote location over bluetooth</dd>
 <dd>SensorPush HT.w Wireless Thermometer/Hygrometer Water-Resistant for iPhone/Android. USA Made Indoor/Outdoor Humidity/Temperature/Dewpoint/VPD Monitor/Logger. Smart Sensor with Alerts https://a.co/d/4TTQPGd</dd>
+<dt>Supports DHT22 temperature sensor(s)</dt>
 
 <br>
 <p>Software:</p>
