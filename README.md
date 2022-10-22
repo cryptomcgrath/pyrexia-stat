@@ -1,7 +1,15 @@
 # pyrexia-stat
 
 A smart thermostat running on Raspberry Pi, Python, and Node.js<br>
-This is the core thermostat control code that runs on the Pi.<br>Once setup, can be monitored and controlled using https://github.com/cryptomcgrath/pyrexia-android<br>
+This is the core thermostat control code that runs on the Pi.<br><br>
+Features:
+<li>Easily runs on 12v DC using either a USB socket (https://a.co/d/b4sLds2) or a step down module (https://a.co/d/25QVf2F)</li>
+<li>Open source - easy to customized and extend</li>
+<li>No cloud requirements -- can be controlled and monitored on your local WIFI</li>
+<li>Available Android client https://github.com/cryptomcgrath/pyrexia-android</li>
+<li>Can be controlled and monitored using REST api</li>
+<li>Ideal for RV's since it runs on DC</li>
+<br>
 <p>Hardware:</p>
 <dl>
 <dt>Raspberry Pi Zero 2W</dt>
