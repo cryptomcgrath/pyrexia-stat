@@ -11,8 +11,15 @@ router.use(bodyParser.json())
 
 
 router.get("/", (req, res, next) => {
-    var sql = "select * from history"
-    var params = []
+    var wheresql = "" 
+    var params = [req.query.limit, req.query.offset]
+    if (req.query.program_id >= 1) {
+        wheresql = " where program_id = ?"
+        params.unshift(req.query.program_id)
+    }
+
+    var sql = "select * from history "+wheresql+" order by action_ts desc limit ? offset ?"
+
     db.all(sql, params, (err, rows) => {
         if (err) {
             res.status(400).json({"error":err.message})

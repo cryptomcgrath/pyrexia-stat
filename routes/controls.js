@@ -62,9 +62,9 @@ router.post("/:id/on", (req, res, next) => {
 router.post("/:id/off", (req, res, next) => {
     var now_seconds = Math.floor(Date.now() / 1000)
     var data = { update_time: now_seconds }
-    var params = [data.update_time, req.params.id]
+    var params = [data.update_time, data.update_time, req.params.id]
     db.run(
-        'UPDATE controls set last_off_time=?, control_on=0 where id=?',
+        'UPDATE controls set last_off_time=?, control_on=0, num_cycles=num_cycles+1, total_run=total_run+?-last_on_time where id=?',
         params, function (err, result) {
             if (err){
                 res.status(400).json({"error": err.message})
@@ -87,12 +87,6 @@ router.post("/", (req, res, next) => {
     if (!req.body.min_rest){
         errors.push("Missing min_rest")
     }
-    if (!req.body.last_off_time){
-        errors.push("Missing last_off_time")
-    }
-    if (!req.body.last_on_time){
-        errors.push("Missing last_on_time")
-    }
     if (!req.body.min_run){
         errors.push("Missing min_run")
     }
@@ -109,8 +103,8 @@ router.post("/", (req, res, next) => {
     var data = {
         name: req.body.name,
         min_rest: req.body.min_rest,
-        last_off_time: req.body.last_off_time,
-        last_on_time: req.body.last_on_time,
+        last_off_time: 0, 
+        last_on_time: 0,
         min_run: req.body.min_run,
         gpio: req.body.gpio,
         gpio_on_hi: req.body.gpio_on_hi
@@ -134,8 +128,6 @@ router.patch("/:id", (req, res, next) => {
     var data = {
         name: req.body.name,
         min_rest: req.body.min_rest,
-        last_off_time: req.body.last_off_time,
-        last_on_time: req.body.last_on_time,
         min_run: req.body.min_run,
         gpio: req.body.gpio,
         gpio_on_hi: req.body.gpio_on_hi
@@ -144,13 +136,11 @@ router.patch("/:id", (req, res, next) => {
         `UPDATE controls set 
            name = COALESCE(?,name), 
            min_rest = COALESCE(?,min_rest), 
-           last_off_time = COALESCE(?,last_off_time) 
-           last_on_time = COALESCE(?,last_on_time)
-           min_run = COALESCE(?,min_run)
-           gpio = COALESCE(?,gpio)
+           min_run = COALESCE(?,min_run),
+           gpio = COALESCE(?,gpio),
            gpio_on_hi = COALESCE(?,gpio_on_hi)
            WHERE id = ?`,
-        [data.name, data.min_rest, data.last_off_time, data.last_on_time, data.min_run, data.gpio, data.gpio_on_hi, params.id],
+        [data.name, data.min_rest, data.min_run, data.gpio, data.gpio_on_hi, req.params.id],
         function (err, result) {
             if (err){
                 res.status(400).json({"error": res.message})

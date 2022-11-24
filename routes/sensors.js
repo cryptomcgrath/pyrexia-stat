@@ -10,6 +10,53 @@ router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
 
 
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Sensor:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           description: The sensor ID.
+ *           example: 1
+ *         name:
+ *           type: string
+ *           description: The sensor's name.
+ *           example: living room dht22
+ *         sensor_type:
+ *           type: string
+ *           example: dht22
+ *           enum: [sp, dht2]
+ *         addr:
+ *           type: string
+ *           description: The address of the sensor, for dht22 the gpio pin, for sp the mac address
+ *           example: 6
+ *           
+ */
+
+
+/**
+ * @swagger
+ * /sensors:
+ *   get:
+ *     summary: Get all sensors
+ *     description: Retrieve a list of sensors
+ *     responses:
+ *       200:
+ *         description: Success - A list of sensors 
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Sensor'
+ */
 router.get("/", (req, res, next) => {
     var sql = "select * from sensors"
     var params = []
