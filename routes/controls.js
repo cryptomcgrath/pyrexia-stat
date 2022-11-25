@@ -93,8 +93,8 @@ router.post("/", (req, res, next) => {
     if (!req.body.gpio){
         errors.push("Missing gpio")
     }
-    if (!req.body.gpio_on_hi){
-        errors.push("Missing gpio_on_hi")
+    if (req.body.gpio_on_hi <= 0){
+        errors.push("Missing or invalid gpio_on_hi")
     }
     if (errors.length){
         res.status(400).json({"error":errors.join(",")})
@@ -109,7 +109,7 @@ router.post("/", (req, res, next) => {
         gpio: req.body.gpio,
         gpio_on_hi: req.body.gpio_on_hi
     }
-    var sql ='INSERT INTO programs (name, min_rest, last_off_time, last_on_time, min_run, gpio, gpio_on_hi) VALUES (?,?,?,?,?,?,?)'
+    var sql ='INSERT INTO controls (name, min_rest, last_off_time, last_on_time, min_run, gpio, gpio_on_hi) VALUES (?,?,?,?,?,?,?)'
     var params =[data.name, data.min_rest, data.last_off_time, data.last_on_time, data.min_run, data.gpio, data.gpio_on_hi]
     db.run(sql, params, function (err, result) {
         if (err){
