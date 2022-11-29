@@ -15,8 +15,8 @@ router.post("/init", (req, res, next) => {
         // users
         db.run('drop table if exists user')
         db.run('CREATE TABLE user ( id INTEGER PRIMARY KEY AUTOINCREMENT, email text UNIQUE, password text, access_level INTEGER, CONSTRAINT email_unique UNIQUE(email))')
-        var insert = 'INSERT INTO user (email, password) VALUES (?,?)'
-        db.run(insert, ["edward@edwardmcgrath.com", md5("test1234")])
+        //var insert = 'INSERT INTO user (email, password) VALUES (?,?)'
+        //db.run(insert, ["edward@edwardmcgrath.com", md5("test1234")])
 
         // sensor_types
         db.run('drop table if exists sensor_types')
@@ -28,23 +28,14 @@ router.post("/init", (req, res, next) => {
         // sensors
         db.run('drop table if exists sensors')
         db.run('CREATE TABLE sensors (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, sensor_type text, addr text, update_time integer, value float, update_interval integer)')
-        var insert = 'INSERT INTO sensors (name, sensor_type, addr, update_time, value, update_interval) VALUES (?, ?, ?, ?, ?, ?)'
-        db.run(insert, ['valve bay', 'sp', 'A4:34:F1:7F:CD:D8', 0, 0, 300])
-        db.run(insert, ['living', 'dht22', '6', 0, null, 15])
 
         // controls
         db.run('drop table if exists controls')
         db.run('CREATE TABLE controls (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, min_rest INT, last_off_time INT, last_on_time INT, min_run INT, gpio INT, gpio_on_hi bool, control_on bool, num_cycles int, total_run int)')
 
-        var insert = 'INSERT INTO controls (name, min_rest, last_off_time, last_on_time, min_run, gpio, gpio_on_hi, control_on) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-        db.run(insert, ['furnace', 180, 0, 0, 180, 5, true, false, 0, 0])
-
         // programs
         db.run('drop table if exists programs')
         db.run('CREATE TABLE programs (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, mode text, enabled bool, sensor_id INTEGER, set_point FLOAT, control_id INT, last_action text)') 	
-        var insert = 'INSERT INTO PROGRAMS (name, mode, enabled, sensor_id, set_point, control_id, last_action) VALUES (?, ?, ?, ?, ?, ?, ?)'
-        db.run(insert, ['valve bay', 'heat', true, 1, 60.0, 1, null])
-        db.run(insert, ['living', 'heat', true, 2, 70.0, 1, null])
 
         // history
         db.run('drop table if exists history')
@@ -74,6 +65,13 @@ router.get("/config", (req, res, next) => {
             "message":"success",
             "data":rows
         })
+    })
+})
+
+// ping (unauthenticated)
+router.get("/ping", (req, res, next) => {
+    res.json({
+        "messsage":"success"
     })
 })
 

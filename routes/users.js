@@ -2,6 +2,7 @@
 var express = require("express")
 var db = require("../database.js")
 var md5 = require("md5")
+var validator = require("email-validator")
 
 const router = express.Router()
 
@@ -42,6 +43,56 @@ router.get("/", (req, res, next) => {
     })
 })
 
+
+router.post("/register", (req, res, next) => {
+    var errors=[]
+    if (!req.body.password){
+        errors.push("No password specified")
+    }
+    if (!req.body.email){
+        errors.push("No email specified")
+    }
+    if (!validator.validate(req.body.email)) {
+        errors.push("Invalid email address")
+    }
+    if (errors.length){
+        res.status(400).json({"error":errors.join(",")})
+        return
+    }
+    var data = {
+        email: req.body.email.toLowerCase(),
+        password : md5(req.body.password)
+    }
+
+    // make sure no users exist
+    db.all("SELECT * FROM user LIMIT 1", function(err, row) {
+        if (err) {
+            res.status(400).json({"error": err.message})
+            return
+        }
+        if (row) {
+            res.status(400).json({"error": "user already registered"})
+            return
+        } else {
+            // add the user
+            var sql ='INSERT INTO user (email, password) VALUES (?,?)'
+            var params =[data.email, data.password]
+            db.run(sql, params, function (err, result) {
+                if (err){
+                    res.status(400).json({"error": err.message})
+                    return
+                }
+                res.json({
+                    "message": "success",
+                    "data": data,
+                    "id" : this.lastID
+                })
+            })
+        }
+    })
+
+})
+
 router.get("/:id", (req, res, next) => {
     var sql = "select * from user where id = ?"
     var params = [req.params.id]
@@ -58,51 +109,17 @@ router.get("/:id", (req, res, next) => {
 })
 
 
-router.post("/", (req, res, next) => {
-    var errors=[]
-    if (!req.body.password){
-        errors.push("No password specified")
-    }
-    if (!req.body.email){
-        errors.push("No email specified")
-    }
-    if (errors.length){
-        res.status(400).json({"error":errors.join(",")})
-        return
-    }
-    var data = {
-        name: req.body.name,
-        email: req.body.email,
-        password : md5(req.body.password)
-    }
-    var sql ='INSERT INTO user (name, email, password) VALUES (?,?,?)'
-    var params =[data.name, data.email, data.password]
-    db.run(sql, params, function (err, result) {
-        if (err){
-            res.status(400).json({"error": err.message})
-            return
-        }
-        res.json({
-            "message": "success",
-            "data": data,
-            "id" : this.lastID
-        })
-    })
-})
-
 router.patch("/:id", (req, res, next) => {
     var data = {
-        name: req.body.name,
         email: req.body.email,
         password : req.body.password ? md5(req.body.password) : null
     }
     db.run(
         `UPDATE user set 
-           name = COALESCE(?,name), 
            email = COALESCE(?,email), 
            password = COALESCE(?,password) 
            WHERE id = ?`,
-        [data.name, data.email, data.password, req.params.id],
+        [data.email, data.password, req.params.id],
         function (err, result) {
             if (err){
                 res.status(400).json({"error": res.message})
