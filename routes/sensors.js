@@ -72,6 +72,31 @@ router.get("/", (req, res, next) => {
     })
 })
 
+/**
+ * @swagger
+ * /sensors/{id}
+ *   get:
+ *     summary: Get sensor by id
+ *     parameters:
+ *       in: path
+ *       name: id
+ *       schema:
+ *         type: integer
+ *       required: true
+ *       description: Numeric ID of the sensor to get
+ *
+ *     description: Retrieve the sensor with the specified id
+ *     responses:
+ *       200:
+ *         description: Success - Sensor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   $ref: '#components/schemas/Sensor'
+ */
 router.get("/:id", (req, res, next) => {
     var sql = "select * from sensors where id = ?"
     var params = [req.params.id]
@@ -86,6 +111,7 @@ router.get("/:id", (req, res, next) => {
         })
       })
 })
+
 
 router.post("/:id/temp", (req, res, next) => {
     var data = {
