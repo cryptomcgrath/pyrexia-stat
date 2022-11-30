@@ -29,7 +29,7 @@ router.post("/init", (req, res, next) => {
 
         // controls
         db.run('drop table if exists controls')
-        db.run('CREATE TABLE controls (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, min_rest INT, last_off_time INT, last_on_time INT, min_run INT, gpio INT, gpio_on_hi bool, control_on bool, num_cycles int, total_run int)')
+        db.run('CREATE TABLE controls (id INTEGER PRIMARY KEY AUTOINCREMENT, name text, min_rest INT, last_off_time INT, last_on_time INT, min_run INT, gpio INT, gpio_on_hi bool, control_on bool, num_cycles int, total_run int, run_capacity int)')
 
         // programs
         db.run('drop table if exists programs')

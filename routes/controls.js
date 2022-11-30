@@ -107,10 +107,11 @@ router.post("/", (req, res, next) => {
         last_on_time: 0,
         min_run: req.body.min_run,
         gpio: req.body.gpio,
-        gpio_on_hi: req.body.gpio_on_hi
+        gpio_on_hi: req.body.gpio_on_hi,
+        run_capacity: req.body.run_capacity
     }
-    var sql ='INSERT INTO controls (name, min_rest, last_off_time, last_on_time, min_run, gpio, gpio_on_hi, control_on,num_cycles,total_run) VALUES (?,?,?,?,?,?,?,0,0,0)'
-    var params =[data.name, data.min_rest, data.last_off_time, data.last_on_time, data.min_run, data.gpio, data.gpio_on_hi]
+    var sql ='INSERT INTO controls (name, min_rest, last_off_time, last_on_time, min_run, gpio, gpio_on_hi, control_on,num_cycles,total_run,run_capacity) VALUES (?,?,?,?,?,?,?,0,0,0,?)'
+    var params =[data.name, data.min_rest, data.last_off_time, data.last_on_time, data.min_run, data.gpio, data.gpio_on_hi, data.run_capacity]
     db.run(sql, params, function (err, result) {
         if (err){
             res.status(400).json({"error": err.message})
@@ -130,7 +131,8 @@ router.patch("/:id", (req, res, next) => {
         min_rest: req.body.min_rest,
         min_run: req.body.min_run,
         gpio: req.body.gpio,
-        gpio_on_hi: req.body.gpio_on_hi
+        gpio_on_hi: req.body.gpio_on_hi,
+        run_capacity: req.body.run_capacity
     }
     db.run(
         `UPDATE controls set 
@@ -138,9 +140,10 @@ router.patch("/:id", (req, res, next) => {
            min_rest = COALESCE(?,min_rest), 
            min_run = COALESCE(?,min_run),
            gpio = COALESCE(?,gpio),
-           gpio_on_hi = COALESCE(?,gpio_on_hi)
+           gpio_on_hi = COALESCE(?,gpio_on_hi),
+           run_capacity = COALESCE(?,run_capacity)
            WHERE id = ?`,
-        [data.name, data.min_rest, data.min_run, data.gpio, data.gpio_on_hi, req.params.id],
+        [data.name, data.min_rest, data.min_run, data.gpio, data.gpio_on_hi, data.run_capacity, req.params.id],
         function (err, result) {
             if (err){
                 res.status(400).json({"error": res.message})
