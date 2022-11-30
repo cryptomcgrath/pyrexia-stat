@@ -14,11 +14,9 @@ router.post("/init", (req, res, next) => {
     db.serialize(()=>{
         // users
         db.run('drop table if exists user')
-        db.run('CREATE TABLE user ( id INTEGER PRIMARY KEY AUTOINCREMENT, email text UNIQUE, password text, access_level INTEGER, CONSTRAINT email_unique UNIQUE(email))')
-        //var insert = 'INSERT INTO user (email, password) VALUES (?,?)'
-        //db.run(insert, ["edward@edwardmcgrath.com", md5("test1234")])
-
-        // sensor_types
+        db.run('CREATE TABLE user ( id INTEGER PRIMARY KEY AUTOINCREMENT, email text UNIQUE, password text, token text, access_level INTEGER, CONSTRAINT email_unique UNIQUE(email))')
+       
+        // sensor types 
         db.run('drop table if exists sensor_types')
         db.run('CREATE TABLE sensor_types (sensor_type text PRIMARY_KEY, name text, hook_file text)')
         var insert = 'INSERT INTO sensor_types (sensor_type, name, hook_file) VALUES (?,?,?)'
@@ -41,13 +39,17 @@ router.post("/init", (req, res, next) => {
         db.run('drop table if exists history')
         db.run('CREATE TABLE history (id INTEGER PRIMARY KEY AUTOINCREMENT, program_id INT, set_point FLOAT, action_ts INT, sensor_id INT, sensor_value float, control_id INT, control_on bool, program_action TEXT, control_action TEXT)')
 
+        // config
         db.run('drop table if exists config')
         db.run('CREATE TABLE config (key text, value text)')
+
+        // default config values
         var insert = 'insert into config (key, value) values (?,?)'
         db.run(insert, ['units', 'f'])
         db.run(insert, ['weather_refresh_secs', '1000'])
         db.run(insert, ['openweather_apikey', '24fc7c899cfe76e81071ef08550b62c6'])
         db.run(insert, ['poll_interval', '30'])
+
         res.json({"message": "Ok"})
     })
 
@@ -70,8 +72,12 @@ router.get("/config", (req, res, next) => {
 
 // ping (unauthenticated)
 router.get("/ping", (req, res, next) => {
-    res.json({
-        "messsage":"success"
+    db.all("select count(*) as cnt from user", (err, row) => {
+        if (row) {
+           res.json({"message":"success","data":row})
+        } else {
+           res.status(500).json({"error":"unknown error counting"})
+        }
     })
 })
 
