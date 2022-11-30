@@ -12,7 +12,7 @@ logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 log = logging.getLogger("pyrexia")
 
-base_url = "http://192.168.0.119:8000"
+base_url = "http://localhost:8000"
 
 def get_sensors():
     url = base_url + "/sensors"

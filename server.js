@@ -23,9 +23,6 @@ const programsRouter = require('./routes/programs.js')
 const historyRouter = require('./routes/history.js')
 const statRouter = require('./routes/stat.js')
 
-// swagger
-//swaggerDoc = require('./swagger.json')
-
 // server listen
 var PORT = 8000
 app.listen(PORT, ()=> {
