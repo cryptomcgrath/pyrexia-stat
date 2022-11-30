@@ -10,6 +10,8 @@ var bodyParser = require("body-parser")
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
 
+const { auth } = require("../middleware")
+
 /**
  * @swagger
  * /users:
@@ -26,7 +28,7 @@ router.use(bodyParser.json())
  *               properties:
  *                 message:
  *                   type: string
- *                   example: success 
+ *                   example: success
  */
 router.get("/", (req, res, next) => {
     var sql = "select * from user"
@@ -44,7 +46,7 @@ router.get("/", (req, res, next) => {
 })
 
 
-router.post("/register", (req, res, next) => {
+router.post("/register", auth.checkNotAlreadyRegistered, (req, res, next) => {
     var errors=[]
     if (!req.body.password){
         errors.push("No password specified")
@@ -63,34 +65,20 @@ router.post("/register", (req, res, next) => {
         email: req.body.email.toLowerCase(),
         password : md5(req.body.password)
     }
-
-    // make sure no users exist
-    db.all("SELECT * FROM user LIMIT 1", function(err, row) {
-        if (err) {
+    // add the user
+    var sql ='INSERT INTO user (email, password) VALUES (?,?)'
+    var params =[data.email, data.password]
+    db.run(sql, params, function (err, result) {
+        if (err){
             res.status(400).json({"error": err.message})
             return
         }
-        if (row) {
-            res.status(400).json({"error": "user already registered"})
-            return
-        } else {
-            // add the user
-            var sql ='INSERT INTO user (email, password) VALUES (?,?)'
-            var params =[data.email, data.password]
-            db.run(sql, params, function (err, result) {
-                if (err){
-                    res.status(400).json({"error": err.message})
-                    return
-                }
-                res.json({
-                    "message": "success",
-                    "data": data,
-                    "id" : this.lastID
-                })
-            })
-        }
+        res.json({
+            "message": "success",
+            "data": data,
+            "id" : this.lastID
+        })
     })
-
 })
 
 router.get("/:id", (req, res, next) => {
@@ -115,9 +103,9 @@ router.patch("/:id", (req, res, next) => {
         password : req.body.password ? md5(req.body.password) : null
     }
     db.run(
-        `UPDATE user set 
-           email = COALESCE(?,email), 
-           password = COALESCE(?,password) 
+        `UPDATE user set
+           email = COALESCE(?,email),
+           password = COALESCE(?,password)
            WHERE id = ?`,
         [data.email, data.password, req.params.id],
         function (err, result) {
@@ -148,4 +136,3 @@ router.delete("/:id", (req, res, next) => {
 
 
 module.exports = router
-
