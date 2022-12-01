@@ -39,17 +39,6 @@ router.post("/init", (req, res, next) => {
         db.run('drop table if exists history')
         db.run('CREATE TABLE history (id INTEGER PRIMARY KEY AUTOINCREMENT, program_id INT, set_point FLOAT, action_ts INT, sensor_id INT, sensor_value float, control_id INT, control_on bool, program_action TEXT, control_action TEXT)')
 
-        // config
-        db.run('drop table if exists config')
-        db.run('CREATE TABLE config (key text, value text)')
-
-        // default config values
-        var insert = 'insert into config (key, value) values (?,?)'
-        db.run(insert, ['units', 'f'])
-        db.run(insert, ['weather_refresh_secs', '1000'])
-        db.run(insert, ['openweather_apikey', '24fc7c899cfe76e81071ef08550b62c6'])
-        db.run(insert, ['poll_interval', '30'])
-
         res.json({"message": "Ok"})
     })
 
