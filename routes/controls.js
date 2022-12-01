@@ -78,6 +78,21 @@ router.post("/:id/off", (req, res, next) => {
     )
 })
 
+router.post("/:id/refill", (req, res, next) => {
+    var params = [req.params.id]
+    db.run(
+        'UPDATE controls set num_cycles=0, total_run=0 where id=?',
+        params, (err, result) => {
+            if (err) {
+                res.status(400).json({"error": err.message})
+                return
+            }
+            res.json({
+                "message": "success"
+            })
+        }
+    )
+})
 
 router.post("/", (req, res, next) => {
     var errors=[]

@@ -26,7 +26,9 @@ router.get("/list", (req, res, next) => {
                       c.min_run,
                       c.gpio,
                       c.gpio_on_hi,
-                      c.control_on
+                      c.control_on,
+                      c.total_run,
+                      c.run_capacity
         from programs p, sensors s, controls c
         WHERE p.sensor_id = s.id and
         p.control_id = c.id order by p.control_id, p.id`

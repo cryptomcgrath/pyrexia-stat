@@ -1,4 +1,3 @@
-// create app
 var express = require("express")
 var db = require("../database.js")
 var md5 = require("md5")
@@ -74,7 +73,7 @@ router.get("/", (req, res, next) => {
 
 /**
  * @swagger
- * /sensors/{id}
+ * /sensors/{id}:
  *   get:
  *     summary: Get sensor by id
  *     parameters:
