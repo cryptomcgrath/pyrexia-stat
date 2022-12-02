@@ -44,21 +44,6 @@ router.post("/init", (req, res, next) => {
 
 })
 
-router.get("/config", (req, res, next) => {
-    var sql = "select * from config"
-    var params = []
-    db.all(sql, params, (err, rows) => {
-        if (err) {
-            res.status(400).json({"error":err.message})
-            return
-        }
-        res.json({
-            "message":"success",
-            "data":rows
-        })
-    })
-})
-
 // ping (unauthenticated)
 router.get("/ping", (req, res, next) => {
     db.all("select count(*) as cnt from user", (err, row) => {
@@ -70,7 +55,12 @@ router.get("/ping", (req, res, next) => {
     })
 })
 
-
+// shutdown
+router.post(/shutdown", (req, res, next) => {
+   require('child_process').exec('sudo /sbin/shutdown -r now', (msg) => {
+       res.json({"message":"success","console":msg})
+   }) 
+})
 
 module.exports = router
 
