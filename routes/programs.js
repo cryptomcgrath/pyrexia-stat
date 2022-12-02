@@ -114,7 +114,7 @@ router.post("/:id/action", (req, res, next) => {
     }
     var params = [data.last_action, req.params.id]
     var sql = "update programs set last_action=? where id=?"
-    db.run(sql, params, function (err, result) {
+    db.run(sql, params, (err, result) => {
         if (err){
             res.status(400).json({"error": err.message})
             return
@@ -159,9 +159,9 @@ router.post("/", (req, res, next) => {
         set_point: req.body.set_point,
         control_id: req.body.control_id
     }
-    var sql ='INSERT INTO programs (name, mode, enabled, sensor_id, value, control_id) VALUES (?,?,?,?,?,?)'
-    var params =[data.name, data.type, data.enabled, data.sensor_id, data.set_point, data.control_id]
-    db.run(sql, params, function (err, result) {
+    var sql ='INSERT INTO programs (name, mode, enabled, sensor_id, set_point, control_id) VALUES (?,?,?,?,?,?)'
+    var params =[data.name, data.mode, data.enabled, data.sensor_id, data.set_point, data.control_id]
+    db.run(sql, params, (err, result) => {
         if (err){
             res.status(400).json({"error": err.message})
             return
@@ -187,16 +187,16 @@ router.patch("/:id", (req, res, next) => {
         `UPDATE programs set 
            name = COALESCE(?,name), 
            mode = COALESCE(?,mode), 
-           enabled = COALESCE(?,enabled) 
+           enabled = COALESCE(?,enabled), 
            sensor_id = COALESCE(?,sensor_id),
-           set_point = COALESCE(?,value),
+           set_point = COALESCE(?,set_point),
            control_id = COALESCE(?, control_id)
            WHERE id = ?`,
-        [data.name, data.type, data.enabled, data.sensor_id, data.set_point, data.control_id, params.id],
+        [data.name, data.mode, data.enabled, data.sensor_id, data.set_point, data.control_id, req.params.id],
 
-        function (err, result) {
+        (err, result) => {
             if (err){
-                res.status(400).json({"error": res.message})
+                res.status(400).json({"error": err.message})
                 return
             }
             res.json({
@@ -204,20 +204,20 @@ router.patch("/:id", (req, res, next) => {
                 data: data,
                 changes: this.changes
             })
-    })
+        })
 })
 
 router.delete("/:id", (req, res, next) => {
     db.run(
         'DELETE FROM programs WHERE id = ?',
         req.params.id,
-        function (err, result) {
+        (err, result) => {
             if (err){
-                res.status(400).json({"error": res.message})
+                res.status(400).json({"error": err.message})
                 return
             }
             res.json({"message":"deleted", changes: this.changes})
-    })
+        })
 })
 
 
