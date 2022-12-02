@@ -5,6 +5,7 @@ import asyncio
 import RPi.GPIO as gpio
 import logging
 import asyncio
+import time
 
 import utils as ut
 import relay
@@ -32,6 +33,7 @@ async def main():
 
         # polling loop
         while True:
+            time.sleep(1)
             if ut.currentTimeInt() - last_poll_time > poll_interval: 
                 last_poll_time = ut.currentTimeInt()
 
