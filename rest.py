@@ -38,6 +38,10 @@ def control_off(id):
     url = base_url + "/controls/"+str(id)+"/off"
     res = requests.post(url)
 
+def init_off(id):
+    url = base_url + "/controls/"+str(id)+"/initoff"
+    res = requests.post(url)
+
 def update_program_action(id, action):
     url = base_url + "/programs/"+str(id)+"/action"
     obj = {'action': action}
