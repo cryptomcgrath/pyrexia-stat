@@ -49,9 +49,11 @@ async def main():
                         sensor = next((x for x in sensors if program.id == x.id), None)
                         if sensor is None:
                             log.debug("program id {} could not locate sensor id {}".format(program.id, program.sensor_id))
-                        elif program.enabled == True:
-                            v = await sensor.read_sensor()
-                            log.debug("read_sensor {} {} returned {}".format(sensor.name, sensor.id, v))
+                        else:
+                            v = 0
+                            if program.enabled == True:
+                                v = await sensor.read_sensor()
+                                log.debug("read_sensor {} {} returned {}".format(sensor.name, sensor.id, v))
                             if v > -900:
                                 control = next((x for x in controls if x.id == program.control_id), None)
                                 if control is None:

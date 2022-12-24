@@ -81,6 +81,9 @@ class Control:
         elif self.action == Action.COMMAND_OFF:
             rest.control_off(self.id)
             self.command(False)
+        elif self.action == Action.DISABLED and self.is_on():
+            rest.control_off(self.id)
+            self.command(False)
 
     def init_off(self):
         self.command(False)
