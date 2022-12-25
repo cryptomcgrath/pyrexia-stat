@@ -15,6 +15,7 @@ router.get("/list", (req, res, next) => {
                       p.sensor_id,
                       s.name as sensor_name,
                       s.value as sensor_value,
+                      s.update_time as sensor_update_time,
                       p.mode,
                       p.enabled,
                       p.set_point,
@@ -38,9 +39,11 @@ router.get("/list", (req, res, next) => {
             res.status(400).json({"error": res.messing})
             return
         }
+        var now_seconds = Math.floor(Date.now() / 1000)
         res.json({
            "message":"success",
-           "data":rows
+           "data":rows,
+           "current_time":now_seconds
         })
     })      
 })
