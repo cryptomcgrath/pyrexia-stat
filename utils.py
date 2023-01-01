@@ -15,7 +15,11 @@ def hexStrToBytes(hexstr):
   return bytearray.fromhex(hexstr)
 
 def intToHexStr(i):
-  return (i).to_bytes(4, byteorder='little').hex()
+  try:
+      hexstr = (i).to_bytes(4, byteorder='little').hex()
+      return hexstr
+  except:
+      return ""
 
 def hexStrToSamples(hexStr):
   strarr = []

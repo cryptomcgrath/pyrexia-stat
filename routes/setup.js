@@ -14,7 +14,7 @@ router.post("/init", (req, res, next) => {
     db.serialize(()=>{
         // users
         db.run('drop table if exists user')
-        db.run('CREATE TABLE user ( id INTEGER PRIMARY KEY AUTOINCREMENT, email text UNIQUE, password text, token text, access_level INTEGER, CONSTRAINT email_unique UNIQUE(email))')
+        db.run('CREATE TABLE user ( id INTEGER PRIMARY KEY AUTOINCREMENT, email text UNIQUE, password text, salt text, token text, access_level INTEGER, CONSTRAINT email_unique UNIQUE(email))')
        
         // sensor types 
         db.run('drop table if exists sensor_types')

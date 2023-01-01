@@ -2,6 +2,7 @@
 var express = require("express")
 var db = require("../database.js")
 var md5 = require("md5")
+const auth = require("../middleware/auth.js")
 
 const router = express.Router()
 
@@ -9,7 +10,7 @@ var bodyParser = require("body-parser")
 router.use(bodyParser.urlencoded({ extended: false }))
 router.use(bodyParser.json())
 
-router.get("/list", (req, res, next) => {
+router.get("/list", auth.verifyToken, (req, res, next) => {
     var sql = `SELECT p.id as program_id,
                       p.name as program_name,
                       p.sensor_id,

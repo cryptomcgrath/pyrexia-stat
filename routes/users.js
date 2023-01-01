@@ -3,6 +3,9 @@ var express = require("express")
 var db = require("../database.js")
 var md5 = require("md5")
 var validator = require("email-validator")
+var bcrypt = require("bcryptjs")
+var jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 const router = express.Router()
 
@@ -14,10 +17,10 @@ const auth = require("../middleware/auth.js")
 
 /**
  * @swagger
- * /users:
- *   get:
- *     summary: Get all users
- *     description: Get all users
+ * /login:
+ *   post:
+ *     summary: Login 
+ *     description: Obtain token using email and password to login
  *     responses:
  *       200:
  *         description: Success
@@ -30,19 +33,51 @@ const auth = require("../middleware/auth.js")
  *                   type: string
  *                   example: success
  */
-router.get("/", (req, res, next) => {
-    var sql = "select * from user"
-    var params = []
-    db.all(sql, params, (err, rows) => {
-        if (err) {
-            res.status(400).json({"error":err.message})
-            return
+router.post("/login", (req, res) => {
+  
+  try {      
+    const { email, password } = req.body;
+        if (!(email && password)) {
+            res.status(400).send("All input is required")
         }
-        res.json({
-            "message":"success",
-            "data":rows
-        })
-    })
+            
+        let user = []
+        
+        var sql = "SELECT * FROM user WHERE email = ?"
+        db.all(sql, email, function(err, rows) {
+            if (err){
+                res.status(400).json({"error": err.message})
+                return
+            }
+
+            rows.forEach(function (row) {
+                user.push(row)               
+            })
+            
+            var PHash = bcrypt.hashSync(password, user[0].salt)
+       
+            if(PHash === user[0].password) {
+                // * CREATE JWT TOKEN
+                const token = jwt.sign(
+                    { user_id: user[0].Id, email },
+                      process.env.TOKEN_KEY,
+                    {
+                      expiresIn: "1h", // 60s = 60 seconds - (60m = 60 minutes, 2h = 2 hours, 2d = 2 days)
+                    }  
+                )
+
+                user[0].token = token
+
+            } else {
+                return res.status(400).send("No Match")          
+            }
+
+           return res.status(200).send(user[0])                
+        })	
+    
+    } catch (err) {
+      console.log(err)
+    }    
 })
 
 
@@ -61,13 +96,15 @@ router.post("/register", auth.checkNotAlreadyRegistered, (req, res, next) => {
         res.status(400).json({"error":errors.join(",")})
         return
     }
+    var salt = bcrypt.genSaltSync(10)
     var data = {
         email: req.body.email.toLowerCase(),
-        password : md5(req.body.password)
+        salt: salt,
+        password : bcrypt.hashSync(req.body.password, salt)
     }
     // add the user
-    var sql ='INSERT INTO user (email, password) VALUES (?,?)'
-    var params =[data.email, data.password]
+    var sql ='INSERT INTO user (email, password, salt) VALUES (?,?,?)'
+    var params =[data.email, data.password, data.salt]
     db.run(sql, params, function (err, result) {
         if (err){
             res.status(400).json({"error": err.message})
@@ -81,58 +118,8 @@ router.post("/register", auth.checkNotAlreadyRegistered, (req, res, next) => {
     })
 })
 
-router.get("/:id", (req, res, next) => {
-    var sql = "select * from user where id = ?"
-    var params = [req.params.id]
-    db.get(sql, params, (err, row) => {
-        if (err) {
-          res.status(400).json({"error":err.message})
-          return
-        }
-        res.json({
-            "message":"success",
-            "data":row
-        })
-      })
+router.post("/test", auth.verifyToken, (req, res) => {
+    res.status(200).send("Valid Token!")
 })
-
-
-router.patch("/:id", (req, res, next) => {
-    var data = {
-        email: req.body.email,
-        password : req.body.password ? md5(req.body.password) : null
-    }
-    db.run(
-        `UPDATE user set
-           email = COALESCE(?,email),
-           password = COALESCE(?,password)
-           WHERE id = ?`,
-        [data.email, data.password, req.params.id],
-        function (err, result) {
-            if (err){
-                res.status(400).json({"error": res.message})
-                return
-            }
-            res.json({
-                message: "success",
-                data: data,
-                changes: this.changes
-            })
-    })
-})
-
-router.delete("/:id", (req, res, next) => {
-    db.run(
-        'DELETE FROM user WHERE id = ?',
-        req.params.id,
-        function (err, result) {
-            if (err){
-                res.status(400).json({"error": res.message})
-                return
-            }
-            res.json({"message":"deleted", changes: this.changes})
-    })
-})
-
 
 module.exports = router
