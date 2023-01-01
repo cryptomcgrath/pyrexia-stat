@@ -23,8 +23,10 @@ const programsRouter = require('./routes/programs.js')
 const historyRouter = require('./routes/history.js')
 const statRouter = require('./routes/stat.js')
 
+require("dotenv").config()
+
 // server listen
-var PORT = 8000
+var PORT = process.env.PORT || 8000
 app.listen(PORT, ()=> {
     console.log("Server running on %PORT%".replace("%PORT%", PORT))
 })
