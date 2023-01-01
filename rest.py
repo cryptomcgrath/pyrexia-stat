@@ -113,4 +113,8 @@ def add_history(program_id, set_point, sensor_id, sensor_value, control_id, cont
     res = requests.post(url, json = obj)
     return res
 
-     
+def user_register(email, password):
+    url = base_url + "/users/register"
+    obj = {'email': email, 'password':password}
+    res = requests.post(url, json = obj)
+    return res     
