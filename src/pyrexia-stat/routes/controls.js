@@ -63,19 +63,40 @@ router.post("/:id/off", (req, res, next) => {
     var now_seconds = Math.floor(Date.now() / 1000)
     var data = { update_time: now_seconds }
     var params = [data.update_time, data.update_time, req.params.id]
-    db.run(
-        'UPDATE controls set last_off_time=?, control_on=0, num_cycles=num_cycles+1, total_run=total_run+?-last_on_time where id=?',
-        params, function (err, result) {
-            if (err){
-                res.status(400).json({"error": err.message})
-                return
-            }
-            res.json({
-                "message": "success",
-                "data": data,
+    db.get('SELECT * from controls where id=?', [req.params.id], (err, row) => {
+        if (err) {
+            res.status(400).json({"error": err.message})
+            return
+        }
+        var control_on = row["control_on"]
+        var last_on_time = row["last_on_time"]
+        var run_time = data.update_time - last_on_time
+        
+        if (control_on == 1 && last_on_time > 0 && run_time < 3600*3) {
+            db.run('UPDATE controls set last_off_time=?, control_on=0, num_cycles=num_cycles+1, total_run=total_run+?-last_on_time where id=?', params, (err, result) => {
+                if (err){
+                    res.status(400).json({"error": err.message})
+                    return
+                }
+                res.json({
+                    "message": "success",
+                    "data": data,
+                })
+            })
+        } else {
+            db.run('UPDATE controls set last_off_time=?, control_on=0', params, (err, result) => {
+                if (err) {
+                    res.status(400).json({"error": err.message})
+                    return
+                }
+                res.json({
+                    "message": "success",
+                    "data": data,
+                })
             })
         }
-    )
+
+    })
 })
 
 router.post("/:id/initoff", (req, res, next) => {
