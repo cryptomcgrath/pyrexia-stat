@@ -2,7 +2,7 @@ import utils as ut
 import requests
 import json
 import logging
-
+from dotenv import dotenv_values
 from sensor import Sensor
 from control import Control
 from program import Program
@@ -12,7 +12,11 @@ logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 log = logging.getLogger("pyrexia")
 
-base_url = "http://localhost:8000"
+config = dotenv_values(".env")
+if "BASE_URL" in config:
+    base_url = config["BASE_URL"]
+else:
+    base_url = "http://localhost:8000"
 
 def get_sensors():
     url = base_url + "/sensors"
@@ -118,3 +122,11 @@ def user_register(email, password):
     obj = {'email': email, 'password':password}
     res = requests.post(url, json = obj)
     return res     
+
+def ping(url):
+    url = url + "/setup/ping"
+    try:
+        res = requests.get(url)
+        return res
+    except:
+        return None
