@@ -85,10 +85,6 @@ class Control:
             rest.control_off(self.id)
             self.command(False)
 
-    def init_off(self):
-        self.command(False)
-        rest.init_off(self.id)
-     
     def get_action(self, program, program_sensor):
         if program.enabled == False:
             return Action.DISABLED
