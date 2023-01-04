@@ -8,7 +8,7 @@ import asyncio
 import Adafruit_DHT
 
 
-logging.basicConfig(filename='phyexia-debug.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 log = logging.getLogger("pyrexia")
 
