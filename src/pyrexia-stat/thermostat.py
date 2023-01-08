@@ -6,6 +6,7 @@ import RPi.GPIO as gpio
 import logging
 import asyncio
 import time
+import sys
 
 import utils as ut
 import relay
@@ -23,7 +24,13 @@ async def main():
     poll_interval = 30
 
     try:
-
+        # connect
+        res = rest.connect()
+        if res.ok:
+            fail = "failed to connect to api {}".format(res)
+            log.debug(fail)
+            sys.exit(fail)
+            
         # initialize controls to OFF
         controls = rest.get_controls_list()
         for control in controls:
@@ -34,16 +41,19 @@ async def main():
         # polling loop
         while True:
             time.sleep(1)
-            if ut.currentTimeInt() - last_poll_time > poll_interval: 
+            if ut.currentTimeInt() - last_poll_time > poll_interval:
+                connect_res = rest.connect()
                 last_poll_time = ut.currentTimeInt()
 
-                sensors = rest.get_sensors_list()
-                controls = rest.get_controls_list()
-                programs = rest.get_programs_list()
-
-                log.debug("sensors {} controls {} programs {}".format(len(sensors), len(controls), len(programs)))
-
-                if len(sensors) > 0 and len(controls) > 0 and len(programs) > 0:
+                if connect_res.ok:
+                    sensors = rest.get_sensors_list()
+                    controls = rest.get_controls_list()
+                    programs = rest.get_programs_list()
+                    log.debug("***loop: sensors {} controls {} programs {}".format(len(sensors), len(controls), len(programs)))
+                else:
+                    log.debug("***loop: unable to connect to api {}".format(connect_res))
+                    
+                if connect_res.ok and len(sensors) > 0 and len(controls) > 0 and len(programs) > 0:
                     # run the programs and determine the actions
                     for program in programs:
                         sensor = next((x for x in sensors if program.id == x.id), None)

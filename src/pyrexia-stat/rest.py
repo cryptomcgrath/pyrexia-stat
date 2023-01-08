@@ -2,7 +2,8 @@ import utils as ut
 import requests
 import json
 import logging
-from dotenv import dotenv_values
+import config
+
 from sensor import Sensor
 from control import Control
 from program import Program
@@ -12,11 +13,30 @@ logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 log = logging.getLogger("pyrexia")
 
-config = dotenv_values(".env")
-if "BASE_URL" in config:
-    base_url = config["BASE_URL"]
-else:
-    base_url = "http://localhost:8000"
+base_url = config.base_url
+
+
+def login(user, password):
+    url = base_url + "/users/login"
+    obj = {'email': user, 'password':password}
+    res = requests.post(url, json = obj)
+    if res.ok:
+        token = res.token
+    return res
+
+def register_device(user, password):
+    url = base_url + "/users/register"
+    obj = {'email': user, 'password':password, 'device':'true'}
+    res = requests.post(url, json - obj)
+    return res
+
+def connect():
+    if config.login_registered == "N":
+        reg_res = register_device(config.login_user, config.login_password)
+        if not res_res.ok:
+            return reg_res
+    res = login(config.login_user, config.login_password)
+    return res
 
 def get_sensors():
     url = base_url + "/sensors"
