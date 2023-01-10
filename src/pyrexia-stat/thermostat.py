@@ -26,7 +26,7 @@ async def main():
     try:
         # connect
         res = rest.connect()
-        if res.ok:
+        if not res.ok:
             fail = "failed to connect to api {}".format(res)
             log.debug(fail)
             sys.exit(fail)

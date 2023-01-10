@@ -15,32 +15,42 @@ log = logging.getLogger("pyrexia")
 
 base_url = config.base_url
 
+def get_headers():
+  return {"Content-Type":"application/json", "x-access-token":token}
 
 def login(user, password):
     url = base_url + "/users/login"
     obj = {'email': user, 'password':password}
     res = requests.post(url, json = obj)
     if res.ok:
-        token = res.token
+        data = res.json()
+        global token
+        if "token" in data:
+            token = data["token"]
+            log.debug("login received token {}".format(token))
+        else:
+            token = ""
     return res
 
 def register_device(user, password):
     url = base_url + "/users/register"
-    obj = {'email': user, 'password':password, 'device':'true'}
-    res = requests.post(url, json - obj)
+    obj = {'email': user, 'password':password, 'admin':'true'}
+    res = requests.post(url, json = obj)
+    if res.ok:
+        config.mark_registered()
     return res
 
 def connect():
     if config.login_registered == "N":
         reg_res = register_device(config.login_user, config.login_password)
-        if not res_res.ok:
+        if not reg_res.ok:
             return reg_res
     res = login(config.login_user, config.login_password)
     return res
 
 def get_sensors():
     url = base_url + "/sensors"
-    res = requests.get(url)
+    res = requests.get(url, headers=get_headers())
     if res.ok:
         jData = json.loads(res.content)
         return jData
@@ -51,26 +61,26 @@ def update_sensor_temp(id, temp):
     url = base_url + "/sensors/"+str(id)+"/temp" 
     update_time = ut.currentTimeInt()
     obj = {'value': temp, 'update_time': update_time}
-    res = requests.post(url, json = obj)
+    res = requests.post(url, headers=get_headers(), json=obj)
     return res
 
 def control_on(id):
     url = base_url + "/controls/"+str(id)+"/on"
-    res = requests.post(url)
+    res = requests.post(url, headers=get_headers())
 
 def control_off(id):
     url = base_url + "/controls/"+str(id)+"/off"
-    res = requests.post(url)
+    res = requests.post(url, headers=get_headers())
 
 def update_program_action(id, action):
     url = base_url + "/programs/"+str(id)+"/action"
     obj = {'action': action}
-    res = requests.post(url, json = obj)
+    res = requests.post(url, json = obj, headers=get_headers())
     return res
 
 def get_programs():
     url = base_url + "/programs"
-    res = requests.get(url)
+    res = requests.get(url, headers=get_headers())
     if res.ok:
         jData = json.loads(res.content)
         return jData
@@ -79,7 +89,7 @@ def get_programs():
 
 def get_controls():
     url = base_url + "/controls"
-    res = requests.get(url)
+    res = requests.get(url, headers=get_headers())
     if res.ok:
         json_data = json.loads(res.content)
         return json_data
@@ -130,7 +140,7 @@ def add_history(program_id, set_point, sensor_id, sensor_value, control_id, cont
     update_time = ut.currentTimeInt()
     obj = {'program_id': program_id, 'set_point': set_point, 'action_ts': update_time, 'sensor_id': sensor_id, 'sensor_value': sensor_value, 'control_id': control_id, 'control_on': int(control_on==True), 'program_action': program_action, 'control_action': control_action}
     print("{}".format(obj))
-    res = requests.post(url, json = obj)
+    res = requests.post(url, json = obj, headers=get_headers())
     return res
 
 def user_register(email, password):

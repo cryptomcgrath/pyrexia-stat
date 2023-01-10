@@ -8,7 +8,16 @@ config_object = ConfigParser()
 config_object.read("config.ini")
 
 #Get the API section
-api_section = config_object["API"]
+try:
+    api_section = config_object["API"]
+except:
+    config_object["API"] = {
+        "BASE_URL": "http://localhost:8000",
+        "LOGIN_USER": "",
+        "LOGIN_PASSWORD": "",
+        "LOGIN_REGISTERED": "N"
+    }
+    api_section = config_object["API"]
 
 def write_config():
     #Write changes back to file
@@ -33,7 +42,7 @@ def mark_registered():
 updated = False
 
 base_url = api_section["BASE_URL"]
-if (not base_url):
+if (base_url == ""):
     base_url = "http://localhost:8000"
     api_section["BASE_URL"] = base_url
     updated = True
@@ -41,13 +50,13 @@ if (not base_url):
 login_user = api_section["LOGIN_USER"]
 login_password = api_section["LOGIN_PASSWORD"]
 login_registered = api_section["LOGIN_REGISTERED"]
-if (not login_user and not login_password):
+if (login_user  == "" and login_password == ""):
     login_user = get_device_id() + "@pyrexia-stat.app"
     api_section["LOGIN_USER"] = login_user
     login_password = gen_password()
     api_section["LOGIN_PASSWORD"] = login_password
     login_registered = "N"
-    api_section["LOGIN_REGISTERE"] = login_registered
+    api_section["LOGIN_REGISTERED"] = login_registered
     update = True
     
 if updated:
