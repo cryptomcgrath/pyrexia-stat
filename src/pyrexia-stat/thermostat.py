@@ -63,7 +63,7 @@ async def main():
                             v = 0
                             if program.enabled == True:
                                 v = await sensor.read_sensor()
-                                log.debug("read_sensor {} {} returned {}".format(sensor.name, sensor.id, v))
+                                log.debug("program id {} sensor id {} ({}) read_sensor returned {}".format(program.id, sensor.id, sensor.name, v))
                             if v > -900:
                                 control = next((x for x in controls if x.id == program.control_id), None)
                                 if control is None:
@@ -73,7 +73,7 @@ async def main():
 
                     # execute the actions
                     for control in controls:
-                        log.debug("control {} action {}".format(control.id, control.action))
+                        log.debug("control {} execute_action {}".format(control.id, control.action))
                         control.execute_action()
        
     finally:

@@ -1,8 +1,13 @@
+import logging
 from relay import Relay 
 import utils as ut
 from action import Action
 from mode import Mode
 import rest
+
+logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
+logging.getLogger(__name__).addHandler(logging.NullHandler())
+log = logging.getLogger("pyrexia")
 
 class Control:
     id = 0
@@ -39,7 +44,6 @@ class Control:
         return self.relay.is_on()
 
     def has_min_rest(self):
-        print("has_min_rest {} - {} > {}",ut.currentTimeInt(), self.last_off_time, self.min_rest)
         return ut.currentTimeInt() - self.last_off_time > self.min_rest
 
     def has_min_run(self):
@@ -71,6 +75,7 @@ class Control:
         else:
             self.action = program_action
 
+        log.debug("program id {} program_action {} control_action {}".format(program.id, program_action.name, self.action.name)) 
         # log to history
         rest.add_history(program.id, program.set_point, program_sensor.id, program_sensor.value, self.id, self.is_on(), program_action.name, self.action.name)
 
@@ -117,7 +122,7 @@ def is_satisfied(sensor_value, set_point, mode):
         return True
 
 def is_call_for_on(sensor_value, set_point, mode):
-    print("is_call_for_on sensor value {} set point {} mode {}".format(sensor_value, set_point, mode))
+    log.debug("is_call_for_on sensor value {} set point {} mode {}".format(sensor_value, set_point, mode))
     if mode == Mode.HEAT:
         return sensor_value < set_point
 

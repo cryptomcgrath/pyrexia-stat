@@ -27,7 +27,7 @@ def login(user, password):
         global token
         if "token" in data:
             token = data["token"]
-            log.debug("login received token {}".format(token))
+            log.debug("login success")
         else:
             token = ""
     return res
