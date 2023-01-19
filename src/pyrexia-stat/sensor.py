@@ -10,7 +10,7 @@ import asyncio
 
 read_error = -999
 
-logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
+#logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 log = logging.getLogger("pyrexia")
 
@@ -62,7 +62,7 @@ class Sensor:
         if not self.can_update():
             return -901
 
-        t = self.hook.read_sensor()
+        t = await self.hook.read_sensor()
         if t > -900:
             self.value = t
             self.update_time = ut.currentTimeInt()

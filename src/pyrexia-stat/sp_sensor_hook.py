@@ -1,26 +1,30 @@
 import sensorpush as sp
 import utils as ut
 from sensor_hook import SensorHook
+from bleak import BleakClient
+import asyncio
 
 import logging
 
-read_error = -999
-
-logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 log = logging.getLogger("pyrexia")
 
 class SpSensorHook(SensorHook):
-    addr = ""
+    _addr = ""
 
     def __init__(self, addr):
-        self.addr = addr
+        self._addr = addr
 
-    def read_sensor(self):
-        macaddr = self.addr
-        sp.connect(macaddr)
+    async def read_sensor(self):
+        client = BleakClient(self._addr)
+        temp_f = -902
+        try:
+            await client.connect()
+            temp_c = await sp.read_temperature(client)
+            temp_f = ut.celsiusToFahrenheit(temp_c)
+        except Exception as e:
+            logging.exception("problem reading sensor")
+        finally:
+            await client.disconnect()
+            return temp_f
 
-        temp = sp.read_first_value()
-        if temp == None:
-            return -902
-        return float(temp)

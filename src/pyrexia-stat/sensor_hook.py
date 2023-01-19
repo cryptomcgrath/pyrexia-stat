@@ -11,7 +11,7 @@ class SensorHook(ABC):
 
 
     @abstractmethod
-    def read_sensor(self):
+    async def read_sensor(self):
         """
         Reads the sensor value
 

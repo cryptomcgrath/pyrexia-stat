@@ -7,7 +7,7 @@ import logging
 import asyncio
 
 
-logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
+#logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 log = logging.getLogger("pyrexia")
 
@@ -17,5 +17,5 @@ class NullSensorHook(SensorHook):
     def __init__(self, addr):
         self.addr = addr
 
-    def read_sensor(self):
+    async def read_sensor(self):
         return -907

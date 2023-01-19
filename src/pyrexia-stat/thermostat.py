@@ -14,7 +14,10 @@ import rest
 from program import Program
 from action import Action
 
-logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8',
+    level=logging.DEBUG,
+    format='%(asctime)s %(levelname).1s %(name)s %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S')
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 log = logging.getLogger("pyrexia")
 

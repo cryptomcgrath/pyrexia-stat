@@ -8,7 +8,7 @@ import asyncio
 import Adafruit_DHT
 
 
-logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
+#logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 log = logging.getLogger("pyrexia")
 
@@ -23,7 +23,7 @@ class DhtSensorHook(SensorHook):
         self.gpio_pin = pin
         self.sensor = Adafruit_DHT.DHT22
 
-    def read_sensor(self):
+    async def read_sensor(self):
         humidity, temperature = Adafruit_DHT.read_retry(self.sensor, self.gpio_pin)
         if humidity is None or temperature is None:
             return -911
