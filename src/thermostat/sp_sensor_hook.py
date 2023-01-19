@@ -1,4 +1,4 @@
-import sensorpush as sp
+from sensorpush-bleak import sensorpush as sp
 import utils as ut
 from sensor_hook import SensorHook
 from bleak import BleakClient

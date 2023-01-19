@@ -3,9 +3,11 @@ import uuid
 import random
 import string
 
-#Read config.ini file
+CONFIG_FILENAME="~/pyrexia-config.ini"
+
+#Read config file
 config_object = ConfigParser()
-config_object.read("config.ini")
+config_object.read(CONFIG_FILENAME)
 
 #Get the API section
 try:
@@ -21,7 +23,7 @@ except:
 
 def write_config():
     #Write changes back to file
-    with open('config.ini', 'w') as conf:
+    with open(CONFIG_FILENAME, 'w') as conf:
         config_object.write(conf)
 
 def get_device_id():

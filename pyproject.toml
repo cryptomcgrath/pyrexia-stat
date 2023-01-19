@@ -10,6 +10,11 @@ authors = [
 ]
 description = "Thermostat runs on raspberry pi"
 readme = "README.md"
+dependencies = [
+    "bleak>=0.19.5",
+    "pytz>=2022.2.1",
+    "sensorpush-bleak>=1.0.7",
+]
 requires-python = ">3.7"
 classifiers = [
     "Programming Language :: Python :: 3",
