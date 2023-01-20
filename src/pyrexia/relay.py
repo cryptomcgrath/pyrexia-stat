@@ -1,6 +1,6 @@
 import RPi.GPIO as gpio
 import logging
-from irelay import IRelay
+from pyrexia.irelay import IRelay
 
 #logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())

@@ -1,14 +1,12 @@
-import sensorpush as sp
-import utils as ut
-import rest
-from sensor_hook import SensorHook
+import pyrexia.utils as ut
+import pyrexia.rest as rest
+from pyrexia.sensor_hook import SensorHook
 
 import logging
 import asyncio
 import Adafruit_DHT
 
 
-#logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 log = logging.getLogger("pyrexia")
 

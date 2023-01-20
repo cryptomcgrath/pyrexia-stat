@@ -1,6 +1,6 @@
-from sensorpush-bleak import sensorpush as sp
-import utils as ut
-from sensor_hook import SensorHook
+from sensorpush import sensorpush as sp
+import pyrexia.utils as ut
+from pyrexia.sensor_hook import SensorHook
 from bleak import BleakClient
 import asyncio
 

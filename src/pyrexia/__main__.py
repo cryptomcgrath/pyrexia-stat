@@ -8,11 +8,11 @@ import asyncio
 import time
 import sys
 
-import utils as ut
-import relay
-import rest
-from program import Program
-from action import Action
+import pyrexia.utils as ut
+import pyrexia.relay as relay
+import pyrexia.rest as rest
+from pyrexia.program import Program
+from pyrexia.action import Action
 
 logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8',
     level=logging.DEBUG,

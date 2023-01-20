@@ -1,12 +1,12 @@
-import utils as ut
+import pyrexia.utils as ut
 import requests
 import json
 import logging
-import config
+import pyrexia.config as config
 
-from sensor import Sensor
-from control import Control
-from program import Program
+from pyrexia.sensor import Sensor
+from pyrexia.control import Control
+from pyrexia.program import Program
 
 #logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())

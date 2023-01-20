@@ -3,7 +3,7 @@ import uuid
 import random
 import string
 
-CONFIG_FILENAME="~/pyrexia-config.ini"
+CONFIG_FILENAME="pyrexia-config.ini"
 
 #Read config file
 config_object = ConfigParser()

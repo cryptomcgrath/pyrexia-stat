@@ -1,16 +1,15 @@
-import utils as ut
-import rest
-from sensor_hook import SensorHook
-from sp_sensor_hook import SpSensorHook
-from null_sensor_hook import NullSensorHook
-from dht_sensor_hook import DhtSensorHook
+import pyrexia.utils as ut
+import pyrexia.rest as rest
+from pyrexia.sensor_hook import SensorHook
+from pyrexia.sp_sensor_hook import SpSensorHook
+from pyrexia.null_sensor_hook import NullSensorHook
+from pyrexia.dht_sensor_hook import DhtSensorHook
 
 import logging
 import asyncio
 
 read_error = -999
 
-#logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 log = logging.getLogger("pyrexia")
 
@@ -68,5 +67,4 @@ class Sensor:
             self.update_time = ut.currentTimeInt()
             rest.update_sensor_temp(self.id, t)
         return t
-
 

@@ -1,8 +1,6 @@
 from enum import Enum
-from mode import Mode
-from action import Action
-import control
-import sensor
+from pyrexia.mode import Mode
+from pyrexia.action import Action
 
 class Program:
     id = 0
