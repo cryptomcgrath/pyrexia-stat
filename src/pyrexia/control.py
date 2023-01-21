@@ -5,7 +5,6 @@ from pyrexia.action import Action
 from pyrexia.mode import Mode
 import pyrexia.rest as rest
 
-#logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
 log = logging.getLogger("pyrexia")
 

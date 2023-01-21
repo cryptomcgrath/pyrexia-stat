@@ -7,14 +7,19 @@ import logging
 import asyncio
 import time
 import sys
+import os
 
+import pyrexia.config as config
+import pyrexia.rest as rest
 import pyrexia.utils as ut
 import pyrexia.relay as relay
-import pyrexia.rest as rest
 from pyrexia.program import Program
 from pyrexia.action import Action
 
-logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8',
+LOG_PATH=os.path.expanduser("~")
+LOG_FILENAME=os.path.join(LOG_PATH, "pyrexia-debug.log")
+
+logging.basicConfig(filename=LOG_FILENAME, encoding='utf-8',
     level=logging.DEBUG,
     format='%(asctime)s %(levelname).1s %(name)s %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S')

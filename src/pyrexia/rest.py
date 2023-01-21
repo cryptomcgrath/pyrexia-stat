@@ -8,9 +8,7 @@ from pyrexia.sensor import Sensor
 from pyrexia.control import Control
 from pyrexia.program import Program
 
-#logging.basicConfig(filename='pyrexia-debug.log', encoding='utf-8', level=logging.DEBUG)
 logging.getLogger(__name__).addHandler(logging.NullHandler())
-
 log = logging.getLogger("pyrexia")
 
 base_url = config.base_url
@@ -42,8 +40,10 @@ def register_device(user, password):
 
 def connect():
     if config.login_registered == "N":
+        log.debug("Attempting to register user {}".format(config.login_user))
         reg_res = register_device(config.login_user, config.login_password)
         if not reg_res.ok:
+            log.debug("Registration failed!") 
             return reg_res
     res = login(config.login_user, config.login_password)
     return res
